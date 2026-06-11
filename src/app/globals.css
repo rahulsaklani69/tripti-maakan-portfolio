@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
+@theme {
+  /* High-fashion typography */
+  --font-serif: var(--font-cormorant), Georgia, serif;
+  --font-sans: var(--font-inter), sans-serif;
+
+  /* Premium Gold Color Palette */
+  --color-gold-50: #fdfbf7;
+  --color-gold-100: #fbf5e1;
+  --color-gold-200: #f5e7b8;
+  --color-gold-300: #edd38c;
+  --color-gold-400: #e3bd61;
+  --color-gold-500: #d4af37; /* Primary Gold (Metallic Gold) */
+  --color-gold-600: #bfa030;
+  --color-gold-700: #9e8125;
+  --color-gold-800: #7d651d;
+  --color-gold-900: #5c4915;
+  --color-gold-950: #3b2e0e;
+
+  /* Luxury Dark Palette */
+  --color-luxury-black: #050505;
+  --color-luxury-gray-900: #0a0a0a;
+  --color-luxury-gray-800: #121212;
+  --color-luxury-gray-700: #1a1a1a;
+  --color-luxury-gray-600: #262626;
+  --color-luxury-white: #f5f5f5;
+  --color-luxury-white-muted: #a3a3a3;
+}
+
+/* Base resets & styling */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #000000;
+  --foreground: #f5f5f5;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.02em;
+}
+
+/* Premium Selection Colors */
+::selection {
+  background-color: var(--color-gold-500);
+  color: #000000;
+}
+
+/* Custom scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-900);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-500);
 }

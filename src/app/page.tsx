@@ -1,65 +1,181 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+
+const stats = [
+  { label: "HEIGHT", value: "175 CM / 5'9\" (TEMP)" },
+  { label: "BUST", value: "82 CM / 32\" (TEMP)" },
+  { label: "WAIST", value: "60 CM / 24\" (TEMP)" },
+  { label: "HIPS", value: "88 CM / 34.5\" (TEMP)" },
+  { label: "EYES", value: "DARK BROWN (TEMP)" },
+  { label: "HAIR", value: "BLACK (TEMP)" },
+  { label: "SHOES", value: "38 EU / 7 US (TEMP)" },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="relative w-full">
+      {/* 1. Hero Section (Full-screen overlay) */}
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1800&q=80')",
+          }}
+        >
+          {/* Dark luxury gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/30" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-6 max-w-4xl space-y-6">
+          <p className="text-xs md:text-sm tracking-[0.4em] text-gold-400 font-semibold uppercase">
+            ELEGANCE • CONFIDENCE • PRESENCE
           </p>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white tracking-[0.15em] uppercase leading-none md:whitespace-nowrap">
+            TRIPTI MAAKAN
+          </h1>
+          <p className="text-xs md:text-sm tracking-[0.25em] text-luxury-white-muted uppercase max-w-2xl mx-auto leading-relaxed">
+            Grace, Confidence and Timeless Presence Captured Through Fashion, Editorial and Creative Storytelling
+          </p>
+          <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/gallery">
+              <Button variant="primary">View Portfolio</Button>
+            </Link>
+            <Link href="/contact">
+              <Button variant="outline">Get In Touch</Button>
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-luxury-white-muted/60 text-[10px] tracking-[0.3em] uppercase animate-pulse">
+          <span>SCROLL</span>
+          <div className="w-[1px] h-12 bg-gold-500/50" />
         </div>
-      </main>
+      </section>
+
+      {/* 2. Measurements / Metrics & About Section */}
+      <section id="about" className="bg-luxury-black py-24 px-6 lg:px-12 border-b border-gold-500/10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          
+          {/* Left: About Text */}
+          <div className="space-y-6">
+            <p className="text-xs tracking-[0.3em] text-gold-500 font-semibold uppercase">
+              ABOUT ME
+            </p>
+            <h2 className="text-3xl md:text-5xl font-serif text-white uppercase leading-tight">
+              A Story of Confidence <br />and Expression
+            </h2>
+            <div className="w-20 h-[1px] bg-gold-500" />
+            <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
+              Tripti Maakan is an aspiring model with a natural passion for fashion, elegance, and creative expression. Her work reflects confidence, versatility, and a modern aesthetic, bringing authenticity to every frame.
+            </p>
+            <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
+              Through editorial concepts, lifestyle campaigns, and collaborative creative projects, Tripti continues to build a portfolio that celebrates individuality, style, and visual storytelling.
+            </p>
+            <div className="pt-4">
+              <Link href="/contact" className="inline-flex items-center text-xs tracking-[0.2em] font-semibold text-gold-500 hover:text-white uppercase transition-colors group">
+                REPRESENTATION INFO <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right: Measurements Table */}
+          <div className="bg-luxury-gray-900 border border-gold-500/10 p-8 md:p-12 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gold-500/5 rounded-full blur-2xl" />
+            <h3 className="font-serif text-white tracking-widest text-lg uppercase mb-8 pb-3 border-b border-gold-500/10 text-center">
+              MODEL DETAILS
+            </h3>
+            <div className="space-y-4">
+              {stats.map((stat, i) => (
+                <div key={i} className="flex justify-between items-center py-2.5 border-b border-luxury-gray-800 last:border-0 text-xs">
+                  <span className="tracking-[0.2em] text-luxury-white-muted font-medium uppercase">{stat.label}</span>
+                  <span className="tracking-[0.1em] text-white font-semibold">{stat.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 3. Featured Categories (Visual Previews) */}
+      <section className="bg-black py-24 px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="text-center space-y-4">
+            <p className="text-xs tracking-[0.3em] text-gold-500 font-semibold uppercase">
+              PORTFOLIO HIGHLIGHTS
+            </p>
+            <h2 className="text-3xl md:text-5xl font-serif text-white uppercase">
+              FEATURED DIVISIONS
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Division 1 */}
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
+              <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
+                <h4 className="font-serif text-2xl text-white tracking-wide uppercase">EDITORIAL</h4>
+                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">VOGUE, BAZAAR, NUMERO</p>
+                <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
+                  VIEW GALLERY
+                </Link>
+              </div>
+            </div>
+
+            {/* Division 2 */}
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
+              <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
+                <h4 className="font-serif text-2xl text-white tracking-wide uppercase">RUNWAY</h4>
+                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">PARIS, MILAN FASHION WEEKS</p>
+                <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
+                  VIEW GALLERY
+                </Link>
+              </div>
+            </div>
+
+            {/* Division 3 */}
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
+              <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
+                <h4 className="font-serif text-2xl text-white tracking-wide uppercase">BEAUTY</h4>
+                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">CHANEL & DIOR CAMPAIGNS</p>
+                <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
+                  VIEW GALLERY
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
