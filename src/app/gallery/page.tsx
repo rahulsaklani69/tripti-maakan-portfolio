@@ -208,6 +208,7 @@ export default function GalleryPage() {
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   loading="lazy"
+                  unoptimized
                 />
 
                 {/* Dark Hover Overlay */}
@@ -271,6 +272,7 @@ export default function GalleryPage() {
               className="object-contain"
               sizes="(max-width: 1280px) 100vw, 1200px"
               priority
+              unoptimized
             />
           </div>
 

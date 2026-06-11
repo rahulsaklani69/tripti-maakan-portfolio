@@ -10,19 +10,19 @@ export default function Sidebar() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    if (supabase) {
+    try {
       await supabase.auth.signOut();
-    } else {
-      localStorage.removeItem("tripti_admin_session");
+    } catch (err) {
+      console.error("Signout error:", err);
     }
     router.push("/login");
   };
 
   const navItems = [
-    { name: "MESSAGES (INBOX)", href: "/admin", icon: Inbox },
-    { name: "MANAGE GALLERY", href: "/admin/gallery", icon: ImageIcon },
-    { name: "MANAGE VIDEOS", href: "/admin/videos", icon: Video },
-    { name: "MANAGE JOURNAL", href: "/admin/blog", icon: BookOpen },
+    { name: "MESSAGES (INBOX)", href: "/tm-private-dashboard-x9k7", icon: Inbox },
+    { name: "MANAGE GALLERY", href: "/tm-private-dashboard-x9k7/gallery", icon: ImageIcon },
+    { name: "MANAGE VIDEOS", href: "/tm-private-dashboard-x9k7/videos", icon: Video },
+    { name: "MANAGE JOURNAL", href: "/tm-private-dashboard-x9k7/blog", icon: BookOpen },
   ];
 
   return (

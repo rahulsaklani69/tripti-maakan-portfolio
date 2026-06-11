@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const stats = [
-  { label: "HEIGHT", value: "175 CM / 5'9\" (TEMP)" },
-  { label: "BUST", value: "82 CM / 32\" (TEMP)" },
-  { label: "WAIST", value: "60 CM / 24\" (TEMP)" },
-  { label: "HIPS", value: "88 CM / 34.5\" (TEMP)" },
-  { label: "EYES", value: "DARK BROWN (TEMP)" },
-  { label: "HAIR", value: "BLACK (TEMP)" },
-  { label: "SHOES", value: "38 EU / 7 US (TEMP)" },
+  { label: "HEIGHT", value: "175 CM / 5'9\"" },
+  { label: "BUST", value: "82 CM / 32\"" },
+  { label: "WAIST", value: "60 CM / 24\"" },
+  { label: "HIPS", value: "88 CM / 34.5\"" },
+  { label: "EYES", value: "DARK BROWN" },
+  { label: "HAIR", value: "BLACK" },
+  { label: "SHOES", value: "38 EU / 7 US" },
 ];
 
 export default function Home() {
@@ -78,7 +78,7 @@ export default function Home() {
             </p>
             <div className="pt-4">
               <Link href="/contact" className="inline-flex items-center text-xs tracking-[0.2em] font-semibold text-gold-500 hover:text-white uppercase transition-colors group">
-                REPRESENTATION INFO <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+                Get In Touch <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
@@ -107,10 +107,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center space-y-4">
             <p className="text-xs tracking-[0.3em] text-gold-500 font-semibold uppercase">
-              PORTFOLIO HIGHLIGHTS
+              VISUAL PORTFOLIO
             </p>
             <h2 className="text-3xl md:text-5xl font-serif text-white uppercase">
-              FEATURED DIVISIONS
+              PORTFOLIO HIGHLIGHTS
             </h2>
           </div>
 
@@ -128,7 +128,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
               <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
                 <h4 className="font-serif text-2xl text-white tracking-wide uppercase">EDITORIAL</h4>
-                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">VOGUE, BAZAAR, NUMERO</p>
+                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">High-Fashion Concept & Editorial Photography</p>
                 <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
                   VIEW GALLERY
                 </Link>
@@ -147,7 +147,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
               <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
                 <h4 className="font-serif text-2xl text-white tracking-wide uppercase">RUNWAY</h4>
-                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">PARIS, MILAN FASHION WEEKS</p>
+                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">Catwalk, Designer Showcases & Runway Presentation</p>
                 <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
                   VIEW GALLERY
                 </Link>
@@ -166,13 +166,42 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
               <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
                 <h4 className="font-serif text-2xl text-white tracking-wide uppercase">BEAUTY</h4>
-                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">CHANEL & DIOR CAMPAIGNS</p>
+                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">Cosmetic Campaigns, Portrait & Close-Up Editorial</p>
                 <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
                   VIEW GALLERY
                 </Link>
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Creative Journey Section */}
+      <section id="journey" className="bg-luxury-gray-900 py-24 px-6 lg:px-12 border-t border-gold-500/10">
+        <div className="max-w-4xl mx-auto text-center space-y-8 relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl" />
+          
+          <div className="space-y-3 relative z-10">
+            <p className="text-xs tracking-[0.3em] text-gold-500 font-semibold uppercase">
+              EXPLORING ART & REFLECTIONS
+            </p>
+            <h2 className="text-3xl md:text-5xl font-serif text-white uppercase tracking-wider">
+              CREATIVE JOURNEY
+            </h2>
+            <div className="w-16 h-[1px] bg-gold-500 mx-auto mt-4" />
+          </div>
+
+          <p className="text-sm md:text-base text-luxury-white-muted leading-relaxed font-light max-w-2xl mx-auto relative z-10">
+            Modeling is more than presentation—it is a study of form, character, and visual storytelling. Tripti documents behind-the-scenes insights, styling reflections, and artistic milestones in her personal journal, sharing the evolution of her craft.
+          </p>
+
+          <div className="pt-6 relative z-10">
+            <Link href="/journal">
+              <Button variant="outline" className="border-gold-500/30 hover:border-gold-500 text-gold-400 hover:text-white px-8 py-6">
+                EXPLORE THE JOURNAL
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

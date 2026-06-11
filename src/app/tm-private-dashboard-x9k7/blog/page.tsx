@@ -6,7 +6,6 @@ import { supabase } from "@/lib/supabase";
 import { Input, Textarea } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Edit2, Loader2, BookOpen, Eye, Check } from "lucide-react";
-import { MOCK_POSTS } from "../../blog/page";
 
 interface BlogPost {
   id: string;
@@ -38,17 +37,6 @@ export default function AdminBlog() {
   useEffect(() => {
     async function fetchAllPosts() {
       setLoading(true);
-      if (!supabase) {
-        // Build mock list with content
-        const mapped = MOCK_POSTS.map((p) => ({
-          ...p,
-          content: "Article content for " + p.title,
-        }));
-        setPosts(mapped);
-        setLoading(false);
-        return;
-      }
-
       try {
         const { data, error } = await supabase
           .from("blog_posts")
@@ -56,23 +44,10 @@ export default function AdminBlog() {
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-
-        if (data && data.length > 0) {
-          setPosts(data as BlogPost[]);
-        } else {
-          const mapped = MOCK_POSTS.map((p) => ({
-            ...p,
-            content: "Article content for " + p.title,
-          }));
-          setPosts(mapped);
-        }
-      } catch (err) {
-        console.error("Supabase blog fetch failed, using mock:", err);
-        const mapped = MOCK_POSTS.map((p) => ({
-          ...p,
-          content: "Article content for " + p.title,
-        }));
-        setPosts(mapped);
+        setPosts(data || []);
+      } catch (err: any) {
+        console.error("Supabase blog fetch failed:", err);
+        setErrorMsg(err.message || "Failed to fetch blog articles.");
       } finally {
         setLoading(false);
       }
@@ -132,116 +107,85 @@ export default function AdminBlog() {
     }
 
     try {
+      // Diagnostic check: verify session role
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log("Supabase Client Session:", session);
+      console.log("User JWT Role Claim:", session?.user?.role);
+      console.log("Authorization Headers Active:", session ? "Yes" : "No");
+
+      if (!session) {
+        throw new Error("No active session found. Please log in again.");
+      }
+
       let finalCoverUrl: string | null = null;
 
-      if (supabase) {
-        // 1. Upload cover image if selected
-        if (coverFile) {
-          const fileExt = coverFile.name.split(".").pop();
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-          const filePath = `blog/${fileName}`;
+      // 1. Upload cover image if selected
+      if (coverFile) {
+        const fileExt = coverFile.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `blog/${fileName}`;
 
-          const { error: uploadError } = await supabase.storage
-            .from("media")
-            .upload(filePath, coverFile);
+        const { error: uploadError } = await supabase.storage
+          .from("media")
+          .upload(filePath, coverFile);
 
-          if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-          const { data: { publicUrl } } = supabase.storage
-            .from("media")
-            .getPublicUrl(filePath);
+        const { data: { publicUrl } } = supabase.storage
+          .from("media")
+          .getPublicUrl(filePath);
 
-          finalCoverUrl = publicUrl;
-        }
+        finalCoverUrl = publicUrl;
+      }
 
-        // Prepare row data
-        const rowData: any = {
-          title,
-          slug,
-          content,
-          published,
-          published_at: published ? new Date().toISOString() : null,
-        };
-        if (finalCoverUrl) {
-          rowData.cover_image = finalCoverUrl;
-        }
+      // Prepare row data
+      const rowData: any = {
+        title,
+        slug,
+        content,
+        published,
+        published_at: published ? new Date().toISOString() : null,
+      };
+      if (finalCoverUrl) {
+        rowData.cover_image = finalCoverUrl;
+      }
 
-        if (editingId) {
-          // Update existing post
-          const { data, error } = await supabase
-            .from("blog_posts")
-            .update(rowData)
-            .eq("id", editingId)
-            .select()
-            .single();
+      if (editingId) {
+        // Update existing post
+        const { data, error } = await supabase
+          .from("blog_posts")
+          .update(rowData)
+          .eq("id", editingId)
+          .select()
+          .single();
 
-          if (error) throw error;
+        if (error) throw error;
 
-          setPosts((prev) => prev.map((p) => (p.id === editingId ? data : p)));
-          setSuccessMsg("Article updated successfully.");
-        } else {
-          // Create new post
-          if (!finalCoverUrl) {
-            // Default cover placeholder
-            rowData.cover_image = "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80";
-          }
-
-          const { data, error } = await supabase
-            .from("blog_posts")
-            .insert([rowData])
-            .select()
-            .single();
-
-          if (error) throw error;
-
-          setPosts((prev) => [data, ...prev]);
-          setSuccessMsg("Article created successfully.");
-        }
+        setPosts((prev) => prev.map((p) => (p.id === editingId ? data : p)));
+        setSuccessMsg("Article updated successfully.");
       } else {
-        // Mock Mode Simulation
-        await new Promise((resolve) => setTimeout(resolve, 1200));
-
-        if (editingId) {
-          setPosts((prev) =>
-            prev.map((p) =>
-              p.id === editingId
-                ? {
-                    ...p,
-                    title,
-                    slug,
-                    content,
-                    published,
-                    published_at: published ? new Date().toISOString() : p.published_at,
-                  }
-                : p
-            )
-          );
-          setSuccessMsg("Article updated successfully (Simulated!).");
-        } else {
-          const mockCover = coverFile
-            ? "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80"
-            : "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80";
-
-          const newPost: BlogPost = {
-            id: `post-${Date.now()}`,
-            title,
-            slug,
-            content,
-            cover_image: mockCover,
-            published,
-            published_at: published ? new Date().toISOString() : null,
-            created_at: new Date().toISOString(),
-          };
-
-          setPosts((prev) => [newPost, ...prev]);
-          setSuccessMsg("Article created successfully (Simulated!).");
+        // Create new post
+        if (!finalCoverUrl) {
+          // Default cover placeholder
+          rowData.cover_image = "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80";
         }
+
+        const { data, error } = await supabase
+          .from("blog_posts")
+          .insert([rowData])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setPosts((prev) => [data, ...prev]);
+        setSuccessMsg("Article created successfully.");
       }
 
       resetForm();
     } catch (err: any) {
       console.error("Failed to save article:", err);
-      setErrorMsg(err.message || "Failed to save article. Verify unique slug or Supabase configuration.");
+      setErrorMsg(err.message || "Failed to save article. Verify unique slug or RLS configurations.");
     } finally {
       setSubmitting(false);
     }
@@ -252,18 +196,16 @@ export default function AdminBlog() {
     if (!confirm("Are you sure you want to delete this article permanently?")) return;
 
     try {
-      if (supabase) {
-        // Delete cover image from bucket if exists
-        if (coverUrl && coverUrl.includes("/storage/v1/object/public/media/")) {
-          const filePath = coverUrl.split("/storage/v1/object/public/media/").pop();
-          if (filePath) {
-            await supabase.storage.from("media").remove([filePath]);
-          }
+      // Delete cover image from bucket if exists
+      if (coverUrl && coverUrl.includes("/storage/v1/object/public/media/")) {
+        const filePath = coverUrl.split("/storage/v1/object/public/media/").pop();
+        if (filePath) {
+          await supabase.storage.from("media").remove([filePath]);
         }
-
-        const { error } = await supabase.from("blog_posts").delete().eq("id", id);
-        if (error) throw error;
       }
+
+      const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+      if (error) throw error;
 
       setPosts((prev) => prev.filter((p) => p.id !== id));
       setSuccessMsg("Article deleted successfully.");
@@ -408,7 +350,7 @@ export default function AdminBlog() {
               </span>
             </div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-20 text-luxury-white-muted">
+            <div className="text-center py-20 text-luxury-white-muted border border-dashed border-luxury-gray-800">
               <p className="text-xs tracking-widest uppercase">No articles in database.</p>
             </div>
           ) : (
@@ -444,7 +386,7 @@ export default function AdminBlog() {
                   <div className="flex gap-2">
                     {post.published && (
                       <Link
-                        href={`/blog/${post.slug}`}
+                        href={`/journal/${post.slug}`}
                         target="_blank"
                         className="p-2 border border-luxury-gray-800 hover:border-gold-500/30 text-luxury-white-muted hover:text-white transition-colors"
                         title="View Article"

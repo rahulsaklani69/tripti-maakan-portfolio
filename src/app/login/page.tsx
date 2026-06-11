@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,25 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Redirect to admin if already logged in
+  useEffect(() => {
+    async function checkExistingSession() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          router.push("/tm-private-dashboard-x9k7");
+        }
+      } catch (err) {
+        console.error("Error checking session:", err);
+      } finally {
+        setCheckingSession(false);
+      }
+    }
+    checkExistingSession();
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,29 +44,15 @@ export default function LoginPage() {
     }
 
     try {
-      if (supabase) {
-        // Live mode: Sign in using Supabase Auth
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        // Redirect to admin panel
-        router.push("/admin");
-      } else {
-        // Mock mode: local testing credentials
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        
-        if (email.toLowerCase() === "admin@triptimaakan.com" && password === "admin123") {
-          // Store dummy session in localStorage
-          localStorage.setItem("tripti_admin_session", "true");
-          router.push("/admin");
-        } else {
-          setErrorMsg("Invalid credentials. In mock mode, use admin@triptimaakan.com / admin123.");
-        }
-      }
+      // Redirect to admin panel
+      router.push("/tm-private-dashboard-x9k7");
     } catch (err: any) {
       console.error("Login failed:", err);
       setErrorMsg(err.message || "Authentication failed. Please verify your credentials.");
@@ -56,6 +60,17 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-gold-500 space-y-3">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="text-xs tracking-widest text-luxury-white-muted uppercase">
+          Checking Session...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center items-center px-6 pt-24 pb-12">
@@ -112,11 +127,6 @@ export default function LoginPage() {
             )}
           </Button>
         </form>
-
-        <div className="text-center border-t border-luxury-gray-800 pt-6 text-[10px] text-luxury-white-muted/60 uppercase tracking-widest space-y-1">
-          <p>MOCK LOGINS ENABLED FOR OFFLINE TESTING</p>
-          <p className="text-gold-500 font-semibold">EMAIL: admin@triptimaakan.com | PASS: admin123</p>
-        </div>
       </div>
     </div>
   );

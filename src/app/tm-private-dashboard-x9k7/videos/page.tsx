@@ -16,17 +16,6 @@ interface VideoItem {
   order_index: number;
 }
 
-const MOCK_VIDEOS: VideoItem[] = [
-  {
-    id: "v-1",
-    title: "Paris Haute Couture Runway Highlights",
-    description: "Featured runway clips from Autumn/Winter Fashion Week.",
-    video_url: "https://assets.mixkit.co/videos/preview/mixkit-fashion-woman-with-silver-makeup-40178-large.mp4",
-    thumbnail_url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80",
-    order_index: 1,
-  },
-];
-
 export default function AdminVideos() {
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,12 +33,6 @@ export default function AdminVideos() {
   useEffect(() => {
     async function fetchVideos() {
       setLoading(true);
-      if (!supabase) {
-        setVideos(MOCK_VIDEOS);
-        setLoading(false);
-        return;
-      }
-
       try {
         const { data, error } = await supabase
           .from("videos")
@@ -57,15 +40,10 @@ export default function AdminVideos() {
           .order("order_index", { ascending: true });
 
         if (error) throw error;
-
-        if (data && data.length > 0) {
-          setVideos(data as VideoItem[]);
-        } else {
-          setVideos([]); // Set to empty array if live DB is connected but empty
-        }
-      } catch (err) {
-        console.error("Supabase fetch failed, using mock:", err);
-        setVideos(MOCK_VIDEOS);
+        setVideos(data || []);
+      } catch (err: any) {
+        console.error("Supabase fetch failed:", err);
+        setErrorMsg(err.message || "Failed to fetch video items.");
       } finally {
         setLoading(false);
       }
@@ -86,29 +64,6 @@ export default function AdminVideos() {
       return;
     }
 
-    if (!supabase) {
-      // Mock mode simulation
-      await new Promise((resolve) => setTimeout(resolve, 1800));
-
-      const newVideo: VideoItem = {
-        id: `mock-v-${Date.now()}`,
-        title,
-        description: description || null,
-        video_url: "https://assets.mixkit.co/videos/preview/mixkit-model-posing-in-a-studio-setting-42240-large.mp4",
-        thumbnail_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
-        order_index: videos.length + 1,
-      };
-
-      setVideos((prev) => [...prev, newVideo]);
-      setSuccessMsg("Video uploaded successfully (Simulated!).");
-      setTitle("");
-      setDescription("");
-      setVideoFile(null);
-      setThumbnailFile(null);
-      setUploading(false);
-      return;
-    }
-
     // Live mode upload
     if (!videoFile) {
       setErrorMsg("Please select a video file (.mp4, .webm, etc.) to upload.");
@@ -117,6 +72,16 @@ export default function AdminVideos() {
     }
 
     try {
+      // Diagnostic check: verify session role
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log("Supabase Client Session:", session);
+      console.log("User JWT Role Claim:", session?.user?.role);
+      console.log("Authorization Headers Active:", session ? "Yes" : "No");
+
+      if (!session) {
+        throw new Error("No active session found. Please log in again.");
+      }
+
       // 1. Upload Video File
       const videoExt = videoFile.name.split(".").pop();
       const videoName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${videoExt}`;
@@ -187,7 +152,7 @@ export default function AdminVideos() {
       if (thumbInput) thumbInput.value = "";
     } catch (err: any) {
       console.error("Video upload failed:", err);
-      setErrorMsg(err.message || "Failed to upload video. Ensure your Storage bucket 'media' exists.");
+      setErrorMsg(err.message || "Failed to upload video. Ensure your Storage bucket 'media' exists and RLS policies are set.");
     } finally {
       setUploading(false);
     }
@@ -198,27 +163,25 @@ export default function AdminVideos() {
     if (!confirm("Are you sure you want to delete this video reel permanently?")) return;
 
     try {
-      if (supabase) {
-        // 1. Delete Video File from Storage
-        if (videoUrl.includes("/storage/v1/object/public/media/")) {
-          const videoPath = videoUrl.split("/storage/v1/object/public/media/").pop();
-          if (videoPath) {
-            await supabase.storage.from("media").remove([videoPath]);
-          }
+      // 1. Delete Video File from Storage
+      if (videoUrl.includes("/storage/v1/object/public/media/")) {
+        const videoPath = videoUrl.split("/storage/v1/object/public/media/").pop();
+        if (videoPath) {
+          await supabase.storage.from("media").remove([videoPath]);
         }
-
-        // 2. Delete Thumbnail File from Storage if it's not the default
-        if (thumbnailUrl.includes("/storage/v1/object/public/media/")) {
-          const thumbPath = thumbnailUrl.split("/storage/v1/object/public/media/").pop();
-          if (thumbPath) {
-            await supabase.storage.from("media").remove([thumbPath]);
-          }
-        }
-
-        // 3. Delete row from table
-        const { error } = await supabase.from("videos").delete().eq("id", id);
-        if (error) throw error;
       }
+
+      // 2. Delete Thumbnail File from Storage if it's not the default
+      if (thumbnailUrl.includes("/storage/v1/object/public/media/")) {
+        const thumbPath = thumbnailUrl.split("/storage/v1/object/public/media/").pop();
+        if (thumbPath) {
+          await supabase.storage.from("media").remove([thumbPath]);
+        }
+      }
+
+      // 3. Delete row from table
+      const { error } = await supabase.from("videos").delete().eq("id", id);
+      if (error) throw error;
 
       setVideos((prev) => prev.filter((v) => v.id !== id));
       setSuccessMsg("Video campaign deleted successfully.");
@@ -344,7 +307,7 @@ export default function AdminVideos() {
               </span>
             </div>
           ) : videos.length === 0 ? (
-            <div className="text-center py-20 text-luxury-white-muted">
+            <div className="text-center py-20 text-luxury-white-muted border border-dashed border-luxury-gray-800">
               <p className="text-xs tracking-widest uppercase">No video reels in list.</p>
             </div>
           ) : (
@@ -355,12 +318,15 @@ export default function AdminVideos() {
                   className="bg-black border border-luxury-gray-800 flex flex-col justify-between group relative overflow-hidden"
                 >
                   <div className="relative aspect-video w-full">
-                    <Image
-                      src={vid.thumbnail_url}
-                      alt={vid.title}
-                      fill
-                      className="object-cover"
-                    />
+                     {vid.thumbnail_url && (
+                       <Image
+                         src={vid.thumbnail_url}
+                         alt={vid.title}
+                         fill
+                         className="object-cover"
+                         unoptimized
+                       />
+                     )}
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
                       <button
                         onClick={() => handleDeleteVideo(vid.id, vid.video_url, vid.thumbnail_url)}

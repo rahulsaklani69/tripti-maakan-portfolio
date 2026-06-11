@@ -6,7 +6,6 @@ import Image from "next/image";
 import { use } from "react";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, Calendar, User, Loader2 } from "lucide-react";
-import { MOCK_POSTS } from "../page";
 
 interface BlogPostDetails {
   id: string;
@@ -16,35 +15,6 @@ interface BlogPostDetails {
   cover_image: string | null;
   published_at: string | null;
 }
-
-const MOCK_CONTENTS: Record<string, string> = {
-  "behind-scenes-paris-fashion-week": `The energy backstage at Paris Fashion Week is unlike anything else in the world. For models, hair stylists, makeup artists, and designers, it is a culmination of months of intense preparation packed into a few hours of electric focus.
-
-## The Morning Prep
-The day begins at 5:00 AM. Arriving at the venue, the space is quiet but humming with anticipation. We check in, grab a quick espresso, and head straight to hair and makeup. Backstage prep is a highly coordinated dance. A stylist is working on your hair while a makeup artist is applying base layers, all while you are coordinating schedule details on your phone.
-
-## The Chaos & Coordination
-As the show hour approaches, the atmosphere shifts. Designers review lookbooks, seamstresses make final modifications to the garments, and casting directors walk us through the runway choreography. Every step is timed; every lighting change is synchronized.
-
-### The Lineup
-Five minutes before showtime, we stand in lineup order. The music starts—a deep, rhythmic bass echoing through the walls. Your heart beats in sync. You step out onto the runway under the bright spotlights, focusing on posture, pacing, and presence. For those sixty seconds on the walk, everything else fades away.`,
-
-  "editorial-photography-motion": `High-fashion photography is more than just posing; it is a collaborative art form that uses movement, geometry, and negative space to tell a designer's story.
-
-## The Concept of Motion
-Unlike commercial headshots, editorial fashion photography values narrative and abstract shapes over traditional portraiture. In a recent shoot, the creative director wanted to explore "kinetic architecture." This meant using clothing as extensions of the surrounding physical structures.
-
-## Working with Light & Shadows
-As a model, understanding light is crucial. You must feel where the key light is coming from and know how to angle your face and body to catch or block it. Small changes—tilting the chin by two degrees, stretching a hand, or twisting the shoulders—can transform a simple photo into a striking piece of art.`,
-
-  "skincare-travel-survival-kit": `Travelling constantly for fashion shoots and runway events can take a heavy toll on skin and wellness. Between dry airplane cabins, heavy backstage makeup, and lack of sleep, maintaining a healthy glow requires a dedicated and consistent routine.
-
-## Hydration is Key
-My absolute rule is hydration. Before boarding a flight, I remove all makeup and apply a thick layer of hyaluronic acid serum followed by a rich barrier cream. I also drink at least two liters of water during long-haul flights.
-
-## Post-Show Detox
-After a runway show, the priority is double cleansing. Backstage makeup is thick and designed to look good under bright lights, which means it can easily clog pores. I use an oil-based cleanser first to break down the makeup, followed by a gentle foaming cleanser.`,
-};
 
 export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   // Unwrap the params promise using React.use()
@@ -57,7 +27,8 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
     async function fetchPostDetails() {
       setLoading(true);
       if (!supabase) {
-        loadMockPost();
+        setPost(null);
+        setLoading(false);
         return;
       }
 
@@ -66,6 +37,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
           .from("blog_posts")
           .select("id, title, slug, content, cover_image, published_at")
           .eq("slug", slug)
+          .eq("published", true)
           .single();
 
         if (error) throw error;
@@ -73,31 +45,14 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
         if (data) {
           setPost(data);
         } else {
-          loadMockPost();
+          setPost(null);
         }
       } catch (err) {
-        console.error("Supabase fetch failed, loading mock post:", err);
-        loadMockPost();
+        console.error("Supabase fetch failed:", err);
+        setPost(null);
       } finally {
         setLoading(false);
       }
-    }
-
-    function loadMockPost() {
-      const parent = MOCK_POSTS.find((p) => p.slug === slug);
-      if (parent) {
-        setPost({
-          id: parent.id,
-          title: parent.title,
-          slug: parent.slug,
-          content: MOCK_CONTENTS[slug] || "Article content details.",
-          cover_image: parent.cover_image,
-          published_at: parent.published_at,
-        });
-      } else {
-        setPost(null);
-      }
-      setLoading(false);
     }
 
     fetchPostDetails();
@@ -105,6 +60,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
 
   // Simple Markdown to HTML elements renderer
   const renderContent = (content: string) => {
+    if (!content) return null;
     return content.split("\n\n").map((block, index) => {
       if (block.startsWith("### ")) {
         return (
@@ -164,7 +120,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
           The article you are looking for does not exist or has been deleted.
         </p>
         <Link
-          href="/blog"
+          href="/journal"
           className="inline-flex items-center text-xs tracking-widest font-semibold text-gold-500 hover:text-white uppercase border border-gold-500/30 hover:border-gold-500 px-6 py-3 transition-colors duration-300"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> BACK TO JOURNAL
@@ -187,7 +143,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
         
         {/* Back Link */}
         <Link
-          href="/blog"
+          href="/journal"
           className="inline-flex items-center text-xs tracking-widest font-semibold text-luxury-white-muted hover:text-gold-400 uppercase transition-colors"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> BACK TO JOURNAL
@@ -220,6 +176,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
               className="object-cover"
               sizes="(max-width: 1200px) 100vw, 800px"
               priority
+              unoptimized
             />
           </div>
         )}

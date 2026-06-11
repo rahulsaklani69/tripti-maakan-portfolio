@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="100%" height="100%">
+  <defs>
+    <!-- Gold gradient for premium fashion branding -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2E3C6" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA7C11" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Side: Monogram Emblem -->
+  <g transform="translate(40, 40)">
+    <!-- Square Luxury Frame -->
+    <rect x="0" y="0" width="120" height="120" rx="4" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" />
+    <!-- Inner Circle -->
+    <circle cx="60" cy="60" r="52" fill="none" stroke="url(#goldGrad)" stroke-width="0.75" stroke-dasharray="3,3" />
+    
+    <!-- Intertwined letters 'T' and 'M' in classic Didot/Cinzel style serif -->
+    <text x="26" y="86" font-family="'Cinzel', 'Didot', 'Playfair Display', 'Georgia', serif" font-size="76" fill="url(#goldGrad)" font-weight="300" letter-spacing="-2">T</text>
+    <text x="50" y="94" font-family="'Cinzel', 'Didot', 'Playfair Display', 'Georgia', serif" font-size="64" fill="url(#goldGrad)" font-weight="300" opacity="0.9">M</text>
+  </g>
+
+  <!-- Right Side: Spaced Typography Logo -->
+  <g transform="translate(200, 105)">
+    <!-- Title -->
+    <text x="0" y="0" font-family="'Inter', sans-serif" font-size="36" font-weight="300" fill="#FFFFFF" letter-spacing="0.45em">TRIPTI MAAKAN</text>
+    <!-- Subtitle -->
+    <text x="4" y="32" font-family="'Cinzel', 'Didot', 'Playfair Display', 'Georgia', serif" font-size="14" font-weight="400" fill="url(#goldGrad)" letter-spacing="0.75em">M O D E L   P O R T F O L I O</text>
+  </g>
+</svg>

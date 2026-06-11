@@ -17,9 +17,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     async function checkAuth() {
-      setLoading(true);
-      if (supabase) {
-        // Live Mode: Check active Supabase session
+      try {
         const {
           data: { session },
         } = await supabase.auth.getSession();
@@ -29,18 +27,32 @@ export default function AdminLayout({
         } else {
           setAuthorized(true);
         }
+      } catch (err) {
+        console.error("Auth check error:", err);
+        router.push("/login");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkAuth();
+
+    // Set up real-time session listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        setAuthorized(false);
+        router.push("/login");
       } else {
-        // Mock Mode: Check local storage mock session
-        const mockSession = localStorage.getItem("tripti_admin_session");
-        if (mockSession !== "true") {
-          router.push("/login");
-        } else {
-          setAuthorized(true);
-        }
+        setAuthorized(true);
       }
       setLoading(false);
-    }
-    checkAuth();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [router]);
 
   if (loading) {

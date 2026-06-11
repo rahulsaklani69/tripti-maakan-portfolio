@@ -1,8 +1,20 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-// Initialize Supabase client if keys are present, otherwise return null (for mock mode)
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn("Supabase credentials are missing from environment variables.");
+}
+
+declare global {
+  var supabase: SupabaseClient | undefined;
+}
+
+// Implement standard Next.js singleton pattern for Supabase client
 export const supabase =
-  supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+  globalThis.supabase || createClient(supabaseUrl, supabaseAnonKey);
+
+if (process.env.NODE_ENV !== "production") {
+  globalThis.supabase = supabase;
+}

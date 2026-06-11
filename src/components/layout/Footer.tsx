@@ -15,35 +15,31 @@ export default function Footer() {
             T R I P T I
           </Link>
           <p className="max-w-sm text-xs leading-relaxed text-luxury-white-muted/80">
-            A premium visual portfolio exhibiting editorials, runways, commercial video reels, and personal journal updates. Represented worldwide by premier agencies.
+            A premium visual portfolio exhibiting editorials, runways, commercial video reels, and personal journal updates.
           </p>
         </div>
 
-        {/* Agency / Representation Column */}
+        {/* Journal Column */}
         <div className="space-y-4">
           <h3 className="font-serif text-white tracking-wider text-xs uppercase border-b border-gold-500/20 pb-2">
-            REPRESENTATION
+            JOURNAL
           </h3>
-          <ul className="space-y-2 text-xs">
-            <li>
-              <span className="text-white block font-medium">Luxe Models (London)</span>
-              <span className="text-luxury-white-muted/70">booking@luxemodels.co.uk</span>
-            </li>
-            <li>
-              <span className="text-white block font-medium">Apex Mgmt (New York)</span>
-              <span className="text-luxury-white-muted/70">info@apexmgmt.com</span>
-            </li>
-          </ul>
+          <p className="text-xs leading-relaxed text-luxury-white-muted/80">
+            Read about behind-the-scenes insights, styling reflections, and creative milestones in Tripti's personal journal.
+          </p>
+          <Link href="/journal" className="inline-flex items-center text-[10px] tracking-widest text-gold-500 hover:text-white uppercase font-bold transition-colors">
+            Read Journal →
+          </Link>
         </div>
 
-        {/* Socials & Admin Column */}
+        {/* Socials Column */}
         <div className="space-y-4">
           <h3 className="font-serif text-white tracking-wider text-xs uppercase border-b border-gold-500/20 pb-2">
             CONNECT
           </h3>
           <div className="flex space-x-4">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/hey.its.bebo_6t9"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 bg-luxury-gray-800 rounded-full border border-gold-500/10 text-white hover:text-gold-400 hover:border-gold-500/50 transition-all duration-300"
@@ -52,24 +48,12 @@ export default function Footer() {
               <Instagram className="h-4 w-4" />
             </a>
             <a
-              href="mailto:triptimaakan@gmail.com"
+              href="mailto:triptimaakan@gmail.com?subject=Portfolio%20Inquiry"
               className="p-2 bg-luxury-gray-800 rounded-full border border-gold-500/10 text-white hover:text-gold-400 hover:border-gold-500/50 transition-all duration-300"
               aria-label="Email"
             >
               <Mail className="h-4 w-4" />
             </a>
-            <Link
-              href="/login"
-              className="p-2 bg-luxury-gray-800 rounded-full border border-gold-500/10 text-white hover:text-gold-400 hover:border-gold-500/50 transition-all duration-300"
-              aria-label="Admin Login"
-            >
-              <Globe className="h-4 w-4" />
-            </Link>
-          </div>
-          <div className="text-xs pt-2">
-            <Link href="/login" className="hover:text-gold-400 transition-colors duration-300">
-              Admin Portal
-            </Link>
           </div>
         </div>
 
@@ -82,6 +66,7 @@ export default function Footer() {
         <div className="flex gap-6">
           <Link href="/gallery" className="hover:text-gold-400 transition-colors">PORTFOLIO</Link>
           <Link href="/videos" className="hover:text-gold-400 transition-colors">GALLERY</Link>
+          <Link href="/journal" className="hover:text-gold-400 transition-colors">JOURNAL</Link>
           <Link href="/#about" className="hover:text-gold-400 transition-colors">ABOUT</Link>
           <Link href="/contact" className="hover:text-gold-400 transition-colors">CONTACT</Link>
         </div>

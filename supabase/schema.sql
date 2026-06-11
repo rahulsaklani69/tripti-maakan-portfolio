@@ -1,4 +1,5 @@
 -- SQL Schema for Modelling Portfolio Website
+-- This schema is idempotent and can be executed multiple times.
 
 -- ==========================================
 -- 1. Create Tables
@@ -58,75 +59,157 @@ ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 
 -- ==========================================
--- 3. Row-Level Security Policies
+-- 3. Drop Existing Policies (to ensure idempotency)
+-- ==========================================
+
+-- Portfolio Items
+DROP POLICY IF EXISTS "Allow public read access on portfolio_items" ON public.portfolio_items;
+DROP POLICY IF EXISTS "Allow admin full access on portfolio_items" ON public.portfolio_items;
+DROP POLICY IF EXISTS "Allow public select on portfolio_items" ON public.portfolio_items;
+DROP POLICY IF EXISTS "Allow admin insert on portfolio_items" ON public.portfolio_items;
+DROP POLICY IF EXISTS "Allow admin update on portfolio_items" ON public.portfolio_items;
+DROP POLICY IF EXISTS "Allow admin delete on portfolio_items" ON public.portfolio_items;
+
+-- Videos
+DROP POLICY IF EXISTS "Allow public read access on videos" ON public.videos;
+DROP POLICY IF EXISTS "Allow admin full access on videos" ON public.videos;
+DROP POLICY IF EXISTS "Allow public select on videos" ON public.videos;
+DROP POLICY IF EXISTS "Allow admin insert on videos" ON public.videos;
+DROP POLICY IF EXISTS "Allow admin update on videos" ON public.videos;
+DROP POLICY IF EXISTS "Allow admin delete on videos" ON public.videos;
+
+-- Blog Posts
+DROP POLICY IF EXISTS "Allow public read access on published blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow admin read access on all blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow admin full write access on blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow admin full access on blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow public select on published blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow admin select on all blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow admin insert on blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow admin update on blog_posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Allow admin delete on blog_posts" ON public.blog_posts;
+
+-- Contact Messages
+DROP POLICY IF EXISTS "Allow public insert access on contact_messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Allow admin full access on contact_messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Allow public insert on contact_messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Allow admin select on contact_messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Allow admin update on contact_messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Allow admin delete on contact_messages" ON public.contact_messages;
+
+-- ==========================================
+-- 4. Row-Level Security Policies (Direct JWT Check)
 -- ==========================================
 
 -- --- portfolio_items Policies ---
--- Allow public read access
-CREATE POLICY "Allow public read access on portfolio_items" 
+CREATE POLICY "Allow public select on portfolio_items" 
 ON public.portfolio_items FOR SELECT 
 USING (true);
 
--- Allow full access to authenticated admin users
-CREATE POLICY "Allow admin full access on portfolio_items" 
-ON public.portfolio_items FOR ALL 
-TO authenticated 
-USING (true) 
-WITH CHECK (true);
+CREATE POLICY "Allow admin insert on portfolio_items" 
+ON public.portfolio_items FOR INSERT 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin update on portfolio_items" 
+ON public.portfolio_items FOR UPDATE 
+USING (auth.role() = 'authenticated') 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin delete on portfolio_items" 
+ON public.portfolio_items FOR DELETE 
+USING (auth.role() = 'authenticated');
 
 
 -- --- videos Policies ---
--- Allow public read access
-CREATE POLICY "Allow public read access on videos" 
+CREATE POLICY "Allow public select on videos" 
 ON public.videos FOR SELECT 
 USING (true);
 
--- Allow full access to authenticated admin users
-CREATE POLICY "Allow admin full access on videos" 
-ON public.videos FOR ALL 
-TO authenticated 
-USING (true) 
-WITH CHECK (true);
+CREATE POLICY "Allow admin insert on videos" 
+ON public.videos FOR INSERT 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin update on videos" 
+ON public.videos FOR UPDATE 
+USING (auth.role() = 'authenticated') 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin delete on videos" 
+ON public.videos FOR DELETE 
+USING (auth.role() = 'authenticated');
 
 
 -- --- blog_posts Policies ---
--- Allow public read access ONLY to published posts
-CREATE POLICY "Allow public read access on published blog_posts" 
+-- Allow public select access ONLY to published posts
+CREATE POLICY "Allow public select on published blog_posts" 
 ON public.blog_posts FOR SELECT 
 USING (published = true);
 
--- Allow admin read access to all posts (including drafts)
-CREATE POLICY "Allow admin read access on all blog_posts" 
+-- Allow admins to view all posts (including drafts)
+CREATE POLICY "Allow admin select on all blog_posts" 
 ON public.blog_posts FOR SELECT 
-TO authenticated 
-USING (true);
+USING (auth.role() = 'authenticated');
 
--- Allow admin full write access
-CREATE POLICY "Allow admin full write access on blog_posts" 
-ON public.blog_posts FOR INSERT/UPDATE/DELETE 
-TO authenticated 
-WITH CHECK (true);
+CREATE POLICY "Allow admin insert on blog_posts" 
+ON public.blog_posts FOR INSERT 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin update on blog_posts" 
+ON public.blog_posts FOR UPDATE 
+USING (auth.role() = 'authenticated') 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin delete on blog_posts" 
+ON public.blog_posts FOR DELETE 
+USING (auth.role() = 'authenticated');
 
 
 -- --- contact_messages Policies ---
 -- Allow public write (anonymous users can send contact messages)
-CREATE POLICY "Allow public insert access on contact_messages" 
+CREATE POLICY "Allow public insert on contact_messages" 
 ON public.contact_messages FOR INSERT 
 WITH CHECK (true);
 
--- Allow admin full access (viewing inbox, changing status, deleting)
-CREATE POLICY "Allow admin full access on contact_messages" 
-ON public.contact_messages FOR ALL 
-TO authenticated 
-USING (true) 
-WITH CHECK (true);
+-- Allow admins to manage contact queries
+CREATE POLICY "Allow admin select on contact_messages" 
+ON public.contact_messages FOR SELECT 
+USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin update on contact_messages" 
+ON public.contact_messages FOR UPDATE 
+USING (auth.role() = 'authenticated') 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow admin delete on contact_messages" 
+ON public.contact_messages FOR DELETE 
+USING (auth.role() = 'authenticated');
 
 -- ==========================================
--- 4. Utility Indexes for Fast Queries
+-- 5. Utility Indexes for Fast Queries
 -- ==========================================
+
 CREATE INDEX IF NOT EXISTS portfolio_items_category_idx ON public.portfolio_items(category);
 CREATE INDEX IF NOT EXISTS portfolio_items_order_idx ON public.portfolio_items(order_index);
 CREATE INDEX IF NOT EXISTS videos_order_idx ON public.videos(order_index);
 CREATE INDEX IF NOT EXISTS blog_posts_slug_idx ON public.blog_posts(slug);
 CREATE INDEX IF NOT EXISTS blog_posts_published_idx ON public.blog_posts(published);
 CREATE INDEX IF NOT EXISTS contact_messages_status_idx ON public.contact_messages(status);
+
+-- ==========================================
+-- 6. Diagnostic Functions
+-- ==========================================
+
+-- Function to inspect the current JWT claims of the caller
+CREATE OR REPLACE FUNCTION public.get_my_claims()
+RETURNS jsonb
+LANGUAGE sql
+SECURITY INVOKER
+AS $$
+  SELECT jsonb_build_object(
+    'uid', auth.uid(),
+    'role', auth.role(),
+    'email', auth.jwt() ->> 'email'
+  );
+$$;
+
+GRANT EXECUTE ON FUNCTION public.get_my_claims() TO public, anon, authenticated;

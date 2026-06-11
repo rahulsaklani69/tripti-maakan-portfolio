@@ -10,6 +10,7 @@ interface BlogPost {
   id: string;
   title: string;
   slug: string;
+  content: string;
   excerpt: string;
   cover_image: string | null;
   published: boolean;
@@ -17,40 +18,21 @@ interface BlogPost {
   created_at: string;
 }
 
-export const MOCK_POSTS: BlogPost[] = [
-  {
-    id: "post-1",
-    title: "Behind the Scenes at Paris Fashion Week",
-    slug: "behind-scenes-paris-fashion-week",
-    excerpt: "A look at the chaotic elegance behind the runway, from quick beauty changes to final walk lineups.",
-    cover_image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80",
-    published: true,
-    published_at: "2026-06-10T12:00:00Z",
-    created_at: "2026-06-10T12:00:00Z",
-  },
-  {
-    id: "post-2",
-    title: "Editorial Photography: Translating Art into Motion",
-    slug: "editorial-photography-motion",
-    excerpt: "Exploring how dynamic posing, lighting, and geometric posture shape Vogue editorial campaigns.",
-    cover_image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
-    published: true,
-    published_at: "2026-05-25T14:30:00Z",
-    created_at: "2026-05-25T14:30:00Z",
-  },
-  {
-    id: "post-3",
-    title: "Skincare and Hydration: A Model's Travel Survival Kit",
-    slug: "skincare-travel-survival-kit",
-    excerpt: "My essential travel routines, clean skincare favorites, and hydration habits during busy fashion weeks.",
-    cover_image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
-    published: true,
-    published_at: "2026-04-12T09:15:00Z",
-    created_at: "2026-04-12T09:15:00Z",
-  },
-];
+// Client-side utility to strip markdown syntax and generate an excerpt
+function generateExcerpt(content: string): string {
+  if (!content) return "";
+  
+  const stripped = content
+    .replace(/[#*`_~]/g, "") // remove hashes, bold/italic asterisks, backticks, tildes
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // replace markdown links [text](url) with just 'text'
+    .replace(/\s+/g, " ") // collapse consecutive whitespace
+    .trim();
 
-export default function BlogPage() {
+  if (stripped.length <= 150) return stripped;
+  return stripped.substring(0, 150) + "...";
+}
+
+export default function JournalPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,7 +40,7 @@ export default function BlogPage() {
     async function fetchPosts() {
       setLoading(true);
       if (!supabase) {
-        setPosts(MOCK_POSTS);
+        setPosts([]);
         setLoading(false);
         return;
       }
@@ -66,23 +48,22 @@ export default function BlogPage() {
       try {
         const { data, error } = await supabase
           .from("blog_posts")
-          .select("id, title, slug, cover_image, published, published_at, created_at")
+          .select("id, title, slug, content, cover_image, published, published_at, created_at")
           .eq("published", true)
           .order("published_at", { ascending: false });
 
         if (error) throw error;
 
         if (data) {
-          // Generate excerpts client-side or maps them
           const mapped: BlogPost[] = data.map((item) => ({
             ...item,
-            excerpt: "A personal entry detailing runway experiences, style portfolios, and modeling journals.",
-          }));
+            excerpt: generateExcerpt(item.content),
+          })) as BlogPost[];
           setPosts(mapped);
         }
       } catch (err) {
-        console.error("Supabase fetch failed, fallback to mock posts:", err);
-        setPosts(MOCK_POSTS);
+        console.error("Supabase fetch failed:", err);
+        setPosts([]);
       } finally {
         setLoading(false);
       }
@@ -130,17 +111,22 @@ export default function BlogPage() {
                 >
                   {/* Left Cover Image */}
                   <Link
-                    href={`/blog/${post.slug}`}
+                    href={`/journal/${post.slug}`}
                     className="md:col-span-5 relative aspect-[16/10] overflow-hidden bg-luxury-gray-900 border border-gold-500/5"
                   >
-                    {post.cover_image && (
+                    {post.cover_image ? (
                       <Image
                         src={post.cover_image}
                         alt={post.title}
                         fill
                         sizes="(max-width: 768px) 100vw, 400px"
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        unoptimized
                       />
+                    ) : (
+                      <div className="w-full h-full bg-luxury-gray-800 flex items-center justify-center text-luxury-white-muted/20 text-xs">
+                        No Image Available
+                      </div>
                     )}
                   </Link>
 
@@ -149,7 +135,7 @@ export default function BlogPage() {
                     <span className="text-[10px] tracking-widest text-gold-400 font-semibold uppercase">
                       {formattedDate}
                     </span>
-                    <Link href={`/blog/${post.slug}`}>
+                    <Link href={`/journal/${post.slug}`}>
                       <h2 className="font-serif text-2xl md:text-3xl text-white uppercase tracking-wide group-hover:text-gold-400 transition-colors duration-300">
                         {post.title}
                       </h2>
@@ -159,7 +145,7 @@ export default function BlogPage() {
                     </p>
                     <div className="pt-2">
                       <Link
-                        href={`/blog/${post.slug}`}
+                        href={`/journal/${post.slug}`}
                         className="inline-flex items-center text-xs tracking-widest font-semibold text-gold-500 hover:text-white uppercase group/btn transition-colors"
                       >
                         READ ARTICLE{" "}

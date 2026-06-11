@@ -12,49 +12,17 @@ interface ContactMessage {
   message: string;
   status: "unread" | "read" | "archived";
   created_at: string;
-}
-
-const MOCK_MESSAGES: ContactMessage[] = [
-  {
-    id: "msg-1",
-    name: "Sarah Jenkins",
-    email: "sarah@vogue.co.uk",
-    subject: "Vogue UK September Issue Casting",
-    message: "Hi Tripti, we are currently planning our September editorial print layout and would love to check your availability for a 2-day studio shoot in London on July 14-15. Please let us know if you or your UK agent are available to discuss rates and moodboards.",
-    status: "unread",
-    created_at: "2026-06-11T10:20:00Z",
-  },
-  {
-    id: "msg-2",
-    name: "Marco Rossi",
-    email: "m.rossi@apexmgmt.com",
-    subject: "Milan Fashion Week SS27",
-    message: "Dear Tripti, we are finalizing the casting schedules for our Milan runway lineup, specifically for Versace and Prada shows. Please let us know your travel schedule for Milan between Sept 18th and 25th.",
-    status: "read",
-    created_at: "2026-06-09T14:30:00Z",
-  },
-  {
-    id: "msg-3",
-    name: "David Miller",
-    email: "david@dior.fr",
-    subject: "Commercial Perfume Campaign Option",
-    message: "Hello, we would like to option Tripti for an upcoming global print and digital campaign for Dior Beauty. We are reviewing options next week. Please send your latest digitals, measurements card, and rates.",
-    status: "archived",
-    created_at: "2026-06-05T09:15:00Z",
-  },
-];
-
-export default function AdminDashboard() {
+}export default function AdminDashboard() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
 
-  // Fetch messages from database or fallback to mock
+  // Fetch messages from database
   useEffect(() => {
     async function fetchMessages() {
       setLoading(true);
       if (!supabase) {
-        setMessages(MOCK_MESSAGES);
+        setMessages([]);
         setLoading(false);
         return;
       }
@@ -67,14 +35,10 @@ export default function AdminDashboard() {
 
         if (error) throw error;
 
-        if (data && data.length > 0) {
-          setMessages(data as ContactMessage[]);
-        } else {
-          setMessages(MOCK_MESSAGES);
-        }
+        setMessages((data as ContactMessage[]) || []);
       } catch (err) {
-        console.error("Supabase error fetching messages, using mock:", err);
-        setMessages(MOCK_MESSAGES);
+        console.error("Supabase error fetching messages:", err);
+        setMessages([]);
       } finally {
         setLoading(false);
       }
