@@ -167,7 +167,7 @@ export default function AdminBlog() {
         // Create new post
         if (!finalCoverUrl) {
           // Default cover placeholder
-          rowData.cover_image = "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80";
+          rowData.cover_image = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
         }
 
         const { data, error } = await supabase
@@ -251,7 +251,7 @@ export default function AdminBlog() {
               label="ARTICLE TITLE *"
               value={title}
               onChange={handleTitleChange}
-              placeholder="e.g. Milan Show Diary"
+              placeholder=""
               disabled={submitting}
               required
             />
@@ -259,7 +259,7 @@ export default function AdminBlog() {
               label="URL SLUG (AUTO-GENERATED) *"
               value={slug}
               onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
-              placeholder="e.g. milan-show-diary"
+              placeholder=""
               disabled={submitting}
               required
             />
@@ -283,7 +283,7 @@ export default function AdminBlog() {
             label="CONTENT (MARKDOWN SUPPORTED) *"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Write your article here. Use ## for Headings, and separate paragraphs with a double line break."
+            placeholder=""
             disabled={submitting}
             className="h-64 font-mono text-xs"
             required

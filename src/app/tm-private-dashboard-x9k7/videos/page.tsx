@@ -98,7 +98,7 @@ export default function AdminVideos() {
         .getPublicUrl(videoPath);
 
       // 2. Upload Thumbnail File (or fallback to placeholder)
-      let finalThumbnailUrl = "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80";
+      let finalThumbnailUrl = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
       if (thumbnailFile) {
         const thumbExt = thumbnailFile.name.split(".").pop();
@@ -217,7 +217,7 @@ export default function AdminVideos() {
             label="VIDEO TITLE *"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Chanel Campaign Motion Reel"
+            placeholder=""
             disabled={uploading}
             required
           />
@@ -226,7 +226,7 @@ export default function AdminVideos() {
             label="VIDEO DESCRIPTION"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Brief details about client, casting director, or creative direction..."
+            placeholder=""
             disabled={uploading}
             className="h-24"
           />

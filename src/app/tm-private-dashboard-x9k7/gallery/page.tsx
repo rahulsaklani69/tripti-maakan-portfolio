@@ -210,7 +210,7 @@ export default function AdminGallery() {
             label="PHOTO TITLE (OPTIONAL)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Dior Campaign SS26"
+            placeholder=""
             disabled={uploading}
           />
 
@@ -368,7 +368,7 @@ export default function AdminGallery() {
                 label="PHOTO TITLE"
                 value={editingItem.title || ""}
                 onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                placeholder="e.g. Dior Campaign SS26"
+                placeholder=""
                 disabled={saving}
               />
 
@@ -394,7 +394,7 @@ export default function AdminGallery() {
                 type="number"
                 value={editingItem.order_index}
                 onChange={(e) => setEditingItem({ ...editingItem, order_index: parseInt(e.target.value) || 0 })}
-                placeholder="e.g. 1"
+                placeholder=""
                 disabled={saving}
               />
 

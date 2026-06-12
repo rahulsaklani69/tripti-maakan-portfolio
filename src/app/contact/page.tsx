@@ -171,7 +171,7 @@ export default function ContactPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="e.g. John Doe"
+                    placeholder=""
                     disabled={submitting}
                     required
                   />
@@ -181,7 +181,7 @@ export default function ContactPage() {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="e.g. name@company.com"
+                    placeholder=""
                     disabled={submitting}
                     required
                   />
@@ -192,7 +192,7 @@ export default function ContactPage() {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  placeholder="e.g. Campaign Booking Fall 2026"
+                  placeholder=""
                   disabled={submitting}
                 />
 
@@ -201,7 +201,7 @@ export default function ContactPage() {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Tell us about the project, date, rates, and requirements..."
+                  placeholder=""
                   disabled={submitting}
                   required
                 />

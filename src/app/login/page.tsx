@@ -96,7 +96,7 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="e.g. admin@triptimaakan.com"
+            placeholder=""
             disabled={loading}
             required
           />
@@ -106,7 +106,7 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder=""
             disabled={loading}
             required
           />
