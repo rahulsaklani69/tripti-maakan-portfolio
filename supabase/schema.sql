@@ -248,3 +248,55 @@ WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptima
 -- Create Index on media_key
 CREATE INDEX IF NOT EXISTS site_media_media_key_idx ON public.site_media(media_key);
 
+
+-- ==========================================
+-- 8. Model Details Table
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS public.model_details (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    height_cm NUMERIC NOT NULL,
+    bust_cm NUMERIC NOT NULL,
+    waist_cm NUMERIC NOT NULL,
+    hips_cm NUMERIC NOT NULL,
+    eye_color TEXT NOT NULL,
+    hair_color TEXT NOT NULL,
+    shoe_size TEXT NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable Row-Level Security
+ALTER TABLE public.model_details ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if any (for idempotency)
+DROP POLICY IF EXISTS "Allow public select on model_details" ON public.model_details;
+DROP POLICY IF EXISTS "Allow admin write on model_details" ON public.model_details;
+
+-- Create Policies
+-- Select policy: Allow anyone to view model details
+CREATE POLICY "Allow public select on model_details" 
+ON public.model_details FOR SELECT 
+USING (true);
+
+-- Write policy: Only authenticated admin can modify model details
+CREATE POLICY "Allow admin write on model_details" 
+ON public.model_details FOR ALL 
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com')
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
+
+-- Seed initial singleton row (with ID '00000000-0000-0000-0000-000000000000' and default values)
+INSERT INTO public.model_details (id, height_cm, bust_cm, waist_cm, hips_cm, eye_color, hair_color, shoe_size, updated_at)
+VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    172,
+    84,
+    61,
+    89,
+    'Green',
+    'Dark Brown',
+    '39',
+    timezone('utc'::text, now())
+)
+ON CONFLICT (id) DO NOTHING;
+
+

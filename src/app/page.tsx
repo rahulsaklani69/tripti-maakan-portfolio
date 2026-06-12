@@ -6,15 +6,38 @@ import { supabase } from "@/lib/supabase";
 
 export const revalidate = 60; // Force cache validation check at most once every 60 seconds
 
-const stats = [
-  { label: "HEIGHT", value: "—" },
-  { label: "BUST", value: "—" },
-  { label: "WAIST", value: "—" },
-  { label: "HIPS", value: "—" },
-  { label: "EYES", value: "—" },
-  { label: "HAIR", value: "—" },
-  { label: "SHOES", value: "—" },
-];
+async function getModelDetails(): Promise<any | null> {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from("model_details")
+      .select("*")
+      .eq("id", "00000000-0000-0000-0000-000000000000")
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch model details:", err);
+    return null;
+  }
+}
+
+// cm to inches conversion: round(cm / 2.54)
+function formatMeasurement(cm: number | null | undefined): string {
+  if (cm === null || cm === undefined || isNaN(Number(cm))) return "—";
+  const inches = Math.round(Number(cm) / 2.54);
+  return `${cm} cm / ${inches}"`;
+}
+
+// height cm to feet/inches conversion
+function formatHeight(cm: number | null | undefined): string {
+  if (cm === null || cm === undefined || isNaN(Number(cm))) return "—";
+  const totalInches = Math.round(Number(cm) / 2.54);
+  const feet = Math.floor(totalInches / 12);
+  const inches = totalInches % 12;
+  return `${cm} cm / ${feet}'${inches}"`;
+}
 
 async function getSiteMedia(): Promise<Record<string, string>> {
   if (!supabase) return {};
@@ -39,6 +62,17 @@ async function getSiteMedia(): Promise<Record<string, string>> {
 
 export default async function Home() {
   const mediaMap = await getSiteMedia();
+  const details = await getModelDetails();
+
+  const stats = [
+    { label: "HEIGHT", value: details ? formatHeight(details.height_cm) : "—" },
+    { label: "BUST", value: details ? formatMeasurement(details.bust_cm) : "—" },
+    { label: "WAIST", value: details ? formatMeasurement(details.waist_cm) : "—" },
+    { label: "HIPS", value: details ? formatMeasurement(details.hips_cm) : "—" },
+    { label: "EYES", value: details?.eye_color || "—" },
+    { label: "HAIR", value: details?.hair_color || "—" },
+    { label: "SHOES", value: details?.shoe_size || "—" },
+  ];
 
   return (
     <div className="relative w-full">
@@ -136,6 +170,15 @@ export default async function Home() {
                 </div>
               ))}
             </div>
+            {details?.updated_at && (
+              <div className="text-[9px] text-luxury-white-muted/40 tracking-widest text-center mt-6 uppercase">
+                Last Updated: {new Date(details.updated_at).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </div>
+            )}
           </div>
 
         </div>
