@@ -22,7 +22,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1800&q=80')",
+              "url('https://eqtpxvapqaitotcdyqbg.supabase.co/storage/v1/object/public/media/hero_image.webp')",
           }}
         >
           {/* Dark luxury gradient overlay */}
