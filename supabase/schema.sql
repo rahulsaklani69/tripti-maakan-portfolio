@@ -214,3 +214,37 @@ AS $$
 $$;
 
 GRANT EXECUTE ON FUNCTION public.get_my_claims() TO public, anon, authenticated;
+
+-- ==========================================
+-- 7. Site Media Management Table
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS public.site_media (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    media_key TEXT UNIQUE NOT NULL, -- e.g., 'hero', 'about'
+    title TEXT,
+    image_url TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable Row-Level Security
+ALTER TABLE public.site_media ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if any (for idempotency)
+DROP POLICY IF EXISTS "Allow public select on site_media" ON public.site_media;
+DROP POLICY IF EXISTS "Allow admin write on site_media" ON public.site_media;
+
+-- Create Policies
+CREATE POLICY "Allow public select on site_media" 
+ON public.site_media FOR SELECT 
+USING (true);
+
+CREATE POLICY "Allow admin write on site_media" 
+ON public.site_media FOR ALL 
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com')
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
+
+-- Create Index on media_key
+CREATE INDEX IF NOT EXISTS site_media_media_key_idx ON public.site_media(media_key);
+

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Inbox, Image as ImageIcon, Video, BookOpen, LogOut } from "lucide-react";
+import { Inbox, Image as ImageIcon, Video, BookOpen, LogOut, FolderOpen } from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -23,6 +23,7 @@ export default function Sidebar() {
     { name: "MANAGE GALLERY", href: "/tm-private-dashboard-x9k7/gallery", icon: ImageIcon },
     { name: "MANAGE VIDEOS", href: "/tm-private-dashboard-x9k7/videos", icon: Video },
     { name: "MANAGE JOURNAL", href: "/tm-private-dashboard-x9k7/blog", icon: BookOpen },
+    { name: "SITE MEDIA", href: "/tm-private-dashboard-x9k7/site-media", icon: FolderOpen },
   ];
 
   return (

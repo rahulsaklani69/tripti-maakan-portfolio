@@ -17,53 +17,42 @@ const stats = [
 ];
 
 async function getHeroImage(): Promise<string | null> {
-  if (!supabase) {
-    console.warn("Supabase client not initialized.");
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from("site_media")
+      .select("image_url")
+      .eq("media_key", "hero")
+      .maybeSingle();
+
+    if (error) throw error;
+    return data?.image_url || null;
+  } catch (err) {
+    console.error("Failed to fetch hero image from site_media:", err);
     return null;
   }
+}
 
+async function getAboutImage(): Promise<string | null> {
+  if (!supabase) return null;
   try {
-    const { data, error } = await supabase.storage
-      .from("media")
-      .list("hero", {
-        limit: 10,
-        sortBy: { column: "name", order: "asc" }
-      });
+    const { data, error } = await supabase
+      .from("site_media")
+      .select("image_url")
+      .eq("media_key", "about")
+      .maybeSingle();
 
-    if (error) {
-      console.error("Supabase Storage error listing media/hero:", error.message);
-      return null;
-    }
-
-    if (!data || data.length === 0) {
-      return null;
-    }
-
-    // Filter to find the first file with an image extension
-    const imageExtensions = [".webp", ".jpg", ".jpeg", ".png", ".gif", ".svg", ".heic", ".tiff"];
-    const firstImageFile = data.find(file => {
-      const lowerName = file.name.toLowerCase();
-      return imageExtensions.some(ext => lowerName.endsWith(ext));
-    });
-
-    if (!firstImageFile) {
-      return null;
-    }
-
-    // Get the public URL for the file
-    const { data: { publicUrl } } = supabase.storage
-      .from("media")
-      .getPublicUrl(`hero/${firstImageFile.name}`);
-
-    return publicUrl;
+    if (error) throw error;
+    return data?.image_url || null;
   } catch (err) {
-    console.error("Failed to retrieve hero image from Supabase:", err);
+    console.error("Failed to fetch about image from site_media:", err);
     return null;
   }
 }
 
 export default async function Home() {
   const heroImageUrl = await getHeroImage();
+  const aboutImageUrl = await getAboutImage();
 
   return (
     <div className="relative w-full">
@@ -140,6 +129,18 @@ export default async function Home() {
             <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
               Through editorial concepts, style showcases, and collaborative projects, Tripti works to build a visual presence that celebrates individuality, modern aesthetics, and visual storytelling.
             </p>
+            {aboutImageUrl && (
+              <div className="relative aspect-[16/10] w-full mt-6 border border-gold-500/10 overflow-hidden">
+                <Image
+                  src={aboutImageUrl}
+                  alt="Tripti Maakan Portrait Profile"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 500px"
+                  unoptimized
+                />
+              </div>
+            )}
             <div className="pt-4">
               <Link href="/contact" className="inline-flex items-center text-xs tracking-[0.2em] font-semibold text-gold-500 hover:text-white uppercase transition-colors group">
                 Get In Touch <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
