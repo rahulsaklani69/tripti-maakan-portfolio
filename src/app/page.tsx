@@ -16,43 +16,29 @@ const stats = [
   { label: "SHOES", value: "—" },
 ];
 
-async function getHeroImage(): Promise<string | null> {
-  if (!supabase) return null;
+async function getSiteMedia(): Promise<Record<string, string>> {
+  if (!supabase) return {};
   try {
     const { data, error } = await supabase
       .from("site_media")
-      .select("image_url")
-      .eq("media_key", "hero")
-      .maybeSingle();
+      .select("media_key, image_url")
+      .in("media_key", ["hero", "editorial", "runway", "beauty"]);
 
     if (error) throw error;
-    return data?.image_url || null;
-  } catch (err) {
-    console.error("Failed to fetch hero image from site_media:", err);
-    return null;
-  }
-}
 
-async function getAboutImage(): Promise<string | null> {
-  if (!supabase) return null;
-  try {
-    const { data, error } = await supabase
-      .from("site_media")
-      .select("image_url")
-      .eq("media_key", "about")
-      .maybeSingle();
-
-    if (error) throw error;
-    return data?.image_url || null;
+    const mediaMap: Record<string, string> = {};
+    data?.forEach((item: any) => {
+      mediaMap[item.media_key] = item.image_url;
+    });
+    return mediaMap;
   } catch (err) {
-    console.error("Failed to fetch about image from site_media:", err);
-    return null;
+    console.error("Failed to fetch site media:", err);
+    return {};
   }
 }
 
 export default async function Home() {
-  const heroImageUrl = await getHeroImage();
-  const aboutImageUrl = await getAboutImage();
+  const mediaMap = await getSiteMedia();
 
   return (
     <div className="relative w-full">
@@ -60,9 +46,9 @@ export default async function Home() {
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
         {/* Background */}
         <div className="absolute inset-0 z-0">
-          {heroImageUrl ? (
+          {mediaMap.hero ? (
             <Image
-              src={heroImageUrl}
+              src={mediaMap.hero}
               alt="Tripti Maakan Portrait Background"
               fill
               priority
@@ -129,18 +115,6 @@ export default async function Home() {
             <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
               Through editorial concepts, style showcases, and collaborative projects, Tripti works to build a visual presence that celebrates individuality, modern aesthetics, and visual storytelling.
             </p>
-            {aboutImageUrl && (
-              <div className="relative aspect-[16/10] w-full mt-6 border border-gold-500/10 overflow-hidden">
-                <Image
-                  src={aboutImageUrl}
-                  alt="Tripti Maakan Portrait Profile"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 500px"
-                  unoptimized
-                />
-              </div>
-            )}
             <div className="pt-4">
               <Link href="/contact" className="inline-flex items-center text-xs tracking-[0.2em] font-semibold text-gold-500 hover:text-white uppercase transition-colors group">
                 Get In Touch <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
@@ -181,10 +155,25 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            {/* Division 1 */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-gradient-to-br from-luxury-gray-900 to-black flex flex-col justify-between p-8">
-              {/* Radial glow effect on hover */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Division 1 - Editorial */}
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-black flex flex-col justify-between p-8">
+              {mediaMap.editorial ? (
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src={mediaMap.editorial}
+                    alt="Editorial Highlight"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    quality={85}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 z-10" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-luxury-gray-900 to-black z-0">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+              )}
               {/* Accent golden bar */}
               <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
               <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
@@ -196,10 +185,25 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Division 2 */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-gradient-to-br from-luxury-gray-900 to-black flex flex-col justify-between p-8">
-              {/* Radial glow effect on hover */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Division 2 - Runway */}
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-black flex flex-col justify-between p-8">
+              {mediaMap.runway ? (
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src={mediaMap.runway}
+                    alt="Runway Highlight"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    quality={85}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 z-10" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-luxury-gray-900 to-black z-0">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+              )}
               {/* Accent golden bar */}
               <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
               <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
@@ -211,10 +215,25 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Division 3 */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-gradient-to-br from-luxury-gray-900 to-black flex flex-col justify-between p-8">
-              {/* Radial glow effect on hover */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Division 3 - Beauty */}
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-black flex flex-col justify-between p-8">
+              {mediaMap.beauty ? (
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src={mediaMap.beauty}
+                    alt="Beauty Highlight"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    quality={85}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 z-10" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-luxury-gray-900 to-black z-0">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+              )}
               {/* Accent golden bar */}
               <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
               <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
