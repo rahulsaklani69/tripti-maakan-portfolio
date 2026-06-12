@@ -108,16 +108,17 @@ USING (true);
 
 CREATE POLICY "Allow admin insert on portfolio_items" 
 ON public.portfolio_items FOR INSERT 
-WITH CHECK (auth.role() = 'authenticated');
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin update on portfolio_items" 
 ON public.portfolio_items FOR UPDATE 
-USING (auth.role() = 'authenticated') 
-WITH CHECK (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com') 
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin delete on portfolio_items" 
 ON public.portfolio_items FOR DELETE 
-USING (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
+
 
 
 -- --- videos Policies ---
@@ -127,16 +128,16 @@ USING (true);
 
 CREATE POLICY "Allow admin insert on videos" 
 ON public.videos FOR INSERT 
-WITH CHECK (auth.role() = 'authenticated');
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin update on videos" 
 ON public.videos FOR UPDATE 
-USING (auth.role() = 'authenticated') 
-WITH CHECK (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com') 
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin delete on videos" 
 ON public.videos FOR DELETE 
-USING (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 
 -- --- blog_posts Policies ---
@@ -148,20 +149,20 @@ USING (published = true);
 -- Allow admins to view all posts (including drafts)
 CREATE POLICY "Allow admin select on all blog_posts" 
 ON public.blog_posts FOR SELECT 
-USING (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin insert on blog_posts" 
 ON public.blog_posts FOR INSERT 
-WITH CHECK (auth.role() = 'authenticated');
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin update on blog_posts" 
 ON public.blog_posts FOR UPDATE 
-USING (auth.role() = 'authenticated') 
-WITH CHECK (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com') 
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin delete on blog_posts" 
 ON public.blog_posts FOR DELETE 
-USING (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 
 -- --- contact_messages Policies ---
@@ -173,16 +174,16 @@ WITH CHECK (true);
 -- Allow admins to manage contact queries
 CREATE POLICY "Allow admin select on contact_messages" 
 ON public.contact_messages FOR SELECT 
-USING (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin update on contact_messages" 
 ON public.contact_messages FOR UPDATE 
-USING (auth.role() = 'authenticated') 
-WITH CHECK (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com') 
+WITH CHECK (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 CREATE POLICY "Allow admin delete on contact_messages" 
 ON public.contact_messages FOR DELETE 
-USING (auth.role() = 'authenticated');
+USING (auth.role() = 'authenticated' AND auth.jwt() ->> 'email' = 'triptimaakan@gmail.com');
 
 -- ==========================================
 -- 5. Utility Indexes for Fast Queries
