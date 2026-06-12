@@ -28,10 +28,50 @@ export default function ContactPage() {
     setSubmitStatus("idle");
     setErrorMessage("");
 
-    // Simple validation
-    if (!formData.name || !formData.email || !formData.message) {
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+    const trimmedSubject = formData.subject.trim();
+    const trimmedMessage = formData.message.trim();
+
+    // Check required fields
+    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
       setSubmitStatus("error");
       setErrorMessage("Please fill out all required fields.");
+      setSubmitting(false);
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setSubmitStatus("error");
+      setErrorMessage("Please enter a valid email address.");
+      setSubmitting(false);
+      return;
+    }
+
+    // Validate maximum field lengths
+    if (trimmedName.length > 100) {
+      setSubmitStatus("error");
+      setErrorMessage("Name must be 100 characters or less.");
+      setSubmitting(false);
+      return;
+    }
+    if (trimmedEmail.length > 100) {
+      setSubmitStatus("error");
+      setErrorMessage("Email must be 100 characters or less.");
+      setSubmitting(false);
+      return;
+    }
+    if (trimmedSubject.length > 200) {
+      setSubmitStatus("error");
+      setErrorMessage("Subject must be 200 characters or less.");
+      setSubmitting(false);
+      return;
+    }
+    if (trimmedMessage.length > 5000) {
+      setSubmitStatus("error");
+      setErrorMessage("Message must be 5000 characters or less.");
       setSubmitting(false);
       return;
     }
@@ -41,10 +81,10 @@ export default function ContactPage() {
         // Live mode: insert into Supabase
         const { error } = await supabase.from("contact_messages").insert([
           {
-            name: formData.name,
-            email: formData.email,
-            subject: formData.subject || null,
-            message: formData.message,
+            name: trimmedName,
+            email: trimmedEmail,
+            subject: trimmedSubject || null,
+            message: trimmedMessage,
             status: "unread",
           },
         ]);
