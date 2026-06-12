@@ -24,6 +24,10 @@ export default function AdminLayout({
 
         if (!session) {
           router.push("/login");
+        } else if (session.user?.email !== "triptimaakan@gmail.com") {
+          console.warn("Unauthorized admin session detected for email:", session.user?.email);
+          await supabase.auth.signOut();
+          router.push("/login?error=unauthorized");
         } else {
           setAuthorized(true);
         }
@@ -40,10 +44,14 @@ export default function AdminLayout({
     // Set up real-time session listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!session) {
         setAuthorized(false);
         router.push("/login");
+      } else if (session.user?.email !== "triptimaakan@gmail.com") {
+        setAuthorized(false);
+        await supabase.auth.signOut();
+        router.push("/login?error=unauthorized");
       } else {
         setAuthorized(true);
       }

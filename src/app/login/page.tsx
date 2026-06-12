@@ -1,27 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Lock } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Redirect to admin if already logged in
+  // Handle unauthorized redirects from URL parameters
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam === "unauthorized") {
+      setErrorMsg("Access Denied: Only triptimaakan@gmail.com is authorized to access the admin portal.");
+    }
+  }, [searchParams]);
+
+  // Redirect to admin if already logged in as authorized admin
   useEffect(() => {
     async function checkExistingSession() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          router.push("/tm-private-dashboard-x9k7");
+          if (session.user?.email === "triptimaakan@gmail.com") {
+            router.push("/tm-private-dashboard-x9k7");
+          } else {
+            // Authenticated as another user -> auto sign out
+            await supabase.auth.signOut();
+          }
         }
       } catch (err) {
         console.error("Error checking session:", err);
@@ -44,12 +58,20 @@ export default function LoginPage() {
     }
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
+
+      // Verify email whitelist authorization
+      if (data.user?.email !== "triptimaakan@gmail.com") {
+        await supabase.auth.signOut();
+        setErrorMsg("Access Denied: Only triptimaakan@gmail.com is authorized to access the admin portal.");
+        setLoading(false);
+        return;
+      }
 
       // Redirect to admin panel
       router.push("/tm-private-dashboard-x9k7");
@@ -129,5 +151,20 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-gold-500 space-y-3">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="text-xs tracking-widest text-luxury-white-muted uppercase">
+          Loading Page...
+        </span>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
