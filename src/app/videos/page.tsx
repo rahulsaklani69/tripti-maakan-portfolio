@@ -14,33 +14,6 @@ interface VideoItem {
   order_index: number;
 }
 
-const MOCK_VIDEOS: VideoItem[] = [
-  {
-    id: "v-1",
-    title: "Paris Haute Couture Runway Highlights",
-    description: "Featured runway clips from Autumn/Winter Fashion Week.",
-    video_url: "https://assets.mixkit.co/videos/preview/mixkit-fashion-woman-with-silver-makeup-40178-large.mp4",
-    thumbnail_url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80",
-    order_index: 1,
-  },
-  {
-    id: "v-2",
-    title: "Chanel Beauty Campaign Reel",
-    description: "Motion capture campaign for the latest Chanel cosmetics line.",
-    video_url: "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-light-futuristic-look-42233-large.mp4",
-    thumbnail_url: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
-    order_index: 2,
-  },
-  {
-    id: "v-3",
-    title: "Editorial Studio Motion Portrait",
-    description: "Behind the scenes mood film showcasing editorial posing.",
-    video_url: "https://assets.mixkit.co/videos/preview/mixkit-model-posing-in-a-studio-setting-42240-large.mp4",
-    thumbnail_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
-    order_index: 3,
-  },
-];
-
 export default function VideosPage() {
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +23,7 @@ export default function VideosPage() {
     async function fetchVideos() {
       setLoading(true);
       if (!supabase) {
-        setVideos(MOCK_VIDEOS);
+        setVideos([]);
         setLoading(false);
         return;
       }
@@ -67,8 +40,8 @@ export default function VideosPage() {
           setVideos(data);
         }
       } catch (err) {
-        console.error("Supabase fetch failed, fallback to mock videos:", err);
-        setVideos(MOCK_VIDEOS);
+        console.error("Supabase fetch failed:", err);
+        setVideos([]);
       } finally {
         setLoading(false);
       }

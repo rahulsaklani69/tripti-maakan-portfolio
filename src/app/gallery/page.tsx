@@ -14,65 +14,6 @@ interface PortfolioItem {
 }
 
 // Curated high-resolution placeholder photos
-const MOCK_ITEMS: PortfolioItem[] = [
-  {
-    id: "mock-1",
-    url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
-    title: "Vogue Italia Editorial Shoot",
-    category: "EDITORIAL",
-    order_index: 1,
-  },
-  {
-    id: "mock-2",
-    url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
-    title: "Paris Runway Fall/Winter",
-    category: "RUNWAY",
-    order_index: 2,
-  },
-  {
-    id: "mock-3",
-    url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80",
-    title: "Summer Collection Runway",
-    category: "RUNWAY",
-    order_index: 3,
-  },
-  {
-    id: "mock-4",
-    url: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
-    title: "Chanel Beauty Campaign",
-    category: "BEAUTY",
-    order_index: 4,
-  },
-  {
-    id: "mock-5",
-    url: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=800&q=80",
-    title: "Luxury Sunglasses Campaign",
-    category: "COMMERCIAL",
-    order_index: 5,
-  },
-  {
-    id: "mock-6",
-    url: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=800&q=80",
-    title: "Urban Streetwear Editorial",
-    category: "EDITORIAL",
-    order_index: 6,
-  },
-  {
-    id: "mock-7",
-    url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
-    title: "Studio Portrait Study",
-    category: "BEAUTY",
-    order_index: 7,
-  },
-  {
-    id: "mock-8",
-    url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80",
-    title: "Gold Foil Editorial Art",
-    category: "EDITORIAL",
-    order_index: 8,
-  },
-];
-
 const categories = ["ALL", "EDITORIAL", "RUNWAY", "COMMERCIAL", "BEAUTY"];
 
 export default function GalleryPage() {
@@ -81,12 +22,12 @@ export default function GalleryPage() {
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Fetch photos from Supabase, or fallback to mock data
+  // Fetch photos from Supabase
   useEffect(() => {
     async function fetchGallery() {
       setLoading(true);
       if (!supabase) {
-        setItems(MOCK_ITEMS);
+        setItems([]);
         setLoading(false);
         return;
       }
@@ -103,8 +44,8 @@ export default function GalleryPage() {
           setItems(data);
         }
       } catch (err) {
-        console.error("Supabase fetch failed, fallback to mock data:", err);
-        setItems(MOCK_ITEMS);
+        console.error("Supabase fetch failed:", err);
+        setItems([]);
       } finally {
         setLoading(false);
       }

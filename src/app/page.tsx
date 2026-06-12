@@ -7,21 +7,19 @@ import { supabase } from "@/lib/supabase";
 export const revalidate = 60; // Force cache validation check at most once every 60 seconds
 
 const stats = [
-  { label: "HEIGHT", value: "175 CM / 5'9\"" },
-  { label: "BUST", value: "82 CM / 32\"" },
-  { label: "WAIST", value: "60 CM / 24\"" },
-  { label: "HIPS", value: "88 CM / 34.5\"" },
-  { label: "EYES", value: "DARK BROWN" },
-  { label: "HAIR", value: "BLACK" },
-  { label: "SHOES", value: "38 EU / 7 US" },
+  { label: "HEIGHT", value: "—" },
+  { label: "BUST", value: "—" },
+  { label: "WAIST", value: "—" },
+  { label: "HIPS", value: "—" },
+  { label: "EYES", value: "—" },
+  { label: "HAIR", value: "—" },
+  { label: "SHOES", value: "—" },
 ];
 
-async function getHeroImage(): Promise<string> {
-  const fallbackUrl = "https://eqtpxvapqaitotcdyqbg.supabase.co/storage/v1/object/public/media/hero_image.webp";
-
+async function getHeroImage(): Promise<string | null> {
   if (!supabase) {
-    console.warn("Supabase client not initialized. Using fallback hero image.");
-    return fallbackUrl;
+    console.warn("Supabase client not initialized.");
+    return null;
   }
 
   try {
@@ -34,12 +32,11 @@ async function getHeroImage(): Promise<string> {
 
     if (error) {
       console.error("Supabase Storage error listing media/hero:", error.message);
-      return fallbackUrl;
+      return null;
     }
 
     if (!data || data.length === 0) {
-      console.warn("No files found in media/hero. Using fallback hero image.");
-      return fallbackUrl;
+      return null;
     }
 
     // Filter to find the first file with an image extension
@@ -50,8 +47,7 @@ async function getHeroImage(): Promise<string> {
     });
 
     if (!firstImageFile) {
-      console.warn("No valid image file found in media/hero. Using fallback hero image.");
-      return fallbackUrl;
+      return null;
     }
 
     // Get the public URL for the file
@@ -62,7 +58,7 @@ async function getHeroImage(): Promise<string> {
     return publicUrl;
   } catch (err) {
     console.error("Failed to retrieve hero image from Supabase:", err);
-    return fallbackUrl;
+    return null;
   }
 }
 
@@ -71,21 +67,26 @@ export default async function Home() {
 
   return (
     <div className="relative w-full">
-      {/* 1. Hero Section (Full-screen background image) */}
+      {/* 1. Hero Section */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
-        {/* Optimized Background Image using Next.js Image */}
+        {/* Background */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src={heroImageUrl}
-            alt="Tripti Maakan Portrait Background"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-            quality={95}
-          />
+          {heroImageUrl ? (
+            <Image
+              src={heroImageUrl}
+              alt="Tripti Maakan Portrait Background"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+              quality={95}
+            />
+          ) : (
+            // Premium luxury black-gold radial backdrop when no image is uploaded
+            <div className="w-full h-full bg-black bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08)_0%,transparent_60%)]" />
+          )}
           {/* Dark luxury gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/45 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/35 z-10" />
         </div>
 
         {/* Hero Content */}
@@ -120,7 +121,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 2. Measurements / Metrics & About Section */}
+      {/* 2. Measurements & About Section */}
       <section id="about" className="bg-luxury-black py-24 px-6 lg:px-12 border-b border-gold-500/10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
@@ -134,10 +135,10 @@ export default async function Home() {
             </h2>
             <div className="w-20 h-[1px] bg-gold-500" />
             <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
-              Tripti Maakan is an aspiring model with a natural passion for fashion, elegance, and creative expression. Her work reflects confidence, versatility, and a modern aesthetic, bringing authenticity to every frame.
+              Tripti Maakan is a model specializing in fashion, runway, editorial, and beauty campaigns. Her professional bio and portfolio updates will be available soon.
             </p>
             <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
-              Through editorial concepts, lifestyle campaigns, and collaborative creative projects, Tripti continues to build a portfolio that celebrates individuality, style, and visual storytelling.
+              Through editorial concepts, style showcases, and collaborative projects, Tripti works to build a visual presence that celebrates individuality, modern aesthetics, and visual storytelling.
             </p>
             <div className="pt-4">
               <Link href="/contact" className="inline-flex items-center text-xs tracking-[0.2em] font-semibold text-gold-500 hover:text-white uppercase transition-colors group">
@@ -180,16 +181,12 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
             {/* Division 1 */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10">
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{
-                  backgroundImage:
-                    "url('https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80')",
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
-              <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-gradient-to-br from-luxury-gray-900 to-black flex flex-col justify-between p-8">
+              {/* Radial glow effect on hover */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Accent golden bar */}
+              <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
+              <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
                 <h4 className="font-serif text-2xl text-white tracking-wide uppercase">EDITORIAL</h4>
                 <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">High-Fashion Concept & Editorial Photography</p>
                 <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
@@ -199,16 +196,12 @@ export default async function Home() {
             </div>
 
             {/* Division 2 */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10">
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{
-                  backgroundImage:
-                    "url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80')",
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
-              <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-gradient-to-br from-luxury-gray-900 to-black flex flex-col justify-between p-8">
+              {/* Radial glow effect on hover */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Accent golden bar */}
+              <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
+              <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
                 <h4 className="font-serif text-2xl text-white tracking-wide uppercase">RUNWAY</h4>
                 <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">Catwalk, Designer Showcases & Runway Presentation</p>
                 <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
@@ -218,16 +211,12 @@ export default async function Home() {
             </div>
 
             {/* Division 3 */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10">
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{
-                  backgroundImage:
-                    "url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80')",
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent transition-opacity duration-300" />
-              <div className="absolute bottom-8 left-8 right-8 flex flex-col justify-end text-left space-y-2">
+            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-gradient-to-br from-luxury-gray-900 to-black flex flex-col justify-between p-8">
+              {/* Radial glow effect on hover */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Accent golden bar */}
+              <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
+              <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
                 <h4 className="font-serif text-2xl text-white tracking-wide uppercase">BEAUTY</h4>
                 <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">Cosmetic Campaigns, Portrait & Close-Up Editorial</p>
                 <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
