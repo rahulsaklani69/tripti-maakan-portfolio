@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -15,45 +16,71 @@ const stats = [
 export default function Home() {
   return (
     <div className="relative w-full">
-      {/* 1. Hero Section (Full-screen overlay) */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://eqtpxvapqaitotcdyqbg.supabase.co/storage/v1/object/public/media/hero_image.webp')",
-          }}
-        >
-          {/* Dark luxury gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/30" />
+      {/* 1. Hero Section (Split-Screen Layout) */}
+      <section className="relative min-h-screen md:h-screen w-full bg-black grid grid-cols-1 md:grid-cols-12 border-b border-gold-500/10 overflow-hidden pt-20 md:pt-0">
+        
+        {/* Left Side: Portrait Image Column */}
+        <div className="md:col-span-5 h-full w-full flex items-center justify-center p-6 md:p-12 bg-black relative border-b md:border-b-0 md:border-r border-gold-500/10">
+          <div className="absolute inset-0 bg-radial-gradient from-gold-500/5 to-transparent pointer-events-none" />
+          <div className="relative w-full max-w-[420px] aspect-[3/4.5] md:h-[80%] border border-gold-500/20 p-2 bg-luxury-gray-900/50 backdrop-blur-sm group hover:border-gold-500/50 transition-colors duration-500">
+            {/* Elegant corner brackets */}
+            <div className="absolute -top-1.5 -left-1.5 w-3 h-3 border-t border-l border-gold-500" />
+            <div className="absolute -top-1.5 -right-1.5 w-3 h-3 border-t border-r border-gold-500" />
+            <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 border-b border-l border-gold-500" />
+            <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 border-b border-r border-gold-500" />
+            
+            <div className="relative w-full h-full overflow-hidden bg-black">
+              <Image
+                src="https://eqtpxvapqaitotcdyqbg.supabase.co/storage/v1/object/public/media/hero_image.webp"
+                alt="Tripti Maakan Portrait"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover object-center transition-transform duration-1000 group-hover:scale-105"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
+            </div>
+          </div>
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 text-center px-6 max-w-4xl space-y-6">
-          <p className="text-xs md:text-sm tracking-[0.4em] text-gold-400 font-semibold uppercase">
-            ELEGANCE • CONFIDENCE • PRESENCE
+        {/* Right Side: Content Column */}
+        <div className="md:col-span-7 h-full w-full flex flex-col justify-center p-8 md:p-16 lg:p-24 relative bg-black space-y-8">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="space-y-4">
+            <p className="text-xs md:text-sm tracking-[0.4em] text-gold-400 font-semibold uppercase animate-fade-in">
+              ELEGANCE • CONFIDENCE • PRESENCE
+            </p>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white tracking-[0.1em] uppercase leading-tight font-light">
+              TRIPTI <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-500 to-gold-600 font-normal">MAAKAN</span>
+            </h1>
+            <div className="w-24 h-[1px] bg-gold-500 mt-2" />
+          </div>
+
+          <p className="text-sm md:text-base tracking-[0.15em] text-luxury-white-muted uppercase max-w-xl leading-relaxed font-light">
+            Grace, Confidence and Timeless Presence Captured Through Fashion, Editorial and Creative Storytelling.
           </p>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white tracking-[0.15em] uppercase leading-none md:whitespace-nowrap">
-            TRIPTI MAAKAN
-          </h1>
-          <p className="text-xs md:text-sm tracking-[0.25em] text-luxury-white-muted uppercase max-w-2xl mx-auto leading-relaxed">
-            Grace, Confidence and Timeless Presence Captured Through Fashion, Editorial and Creative Storytelling
-          </p>
-          <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/gallery">
-              <Button variant="primary">View Portfolio</Button>
+
+          <div className="pt-4 flex flex-col sm:flex-row gap-4">
+            <Link href="/gallery" className="w-full sm:w-auto">
+              <Button variant="primary" className="w-full sm:w-auto px-8 py-4 text-xs tracking-widest font-bold">
+                VIEW PORTFOLIO
+              </Button>
             </Link>
-            <Link href="/contact">
-              <Button variant="outline">Get In Touch</Button>
+            <Link href="/contact" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto px-8 py-4 text-xs tracking-widest font-bold">
+                GET IN TOUCH
+              </Button>
             </Link>
           </div>
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-luxury-white-muted/60 text-[10px] tracking-[0.3em] uppercase animate-pulse">
+        <div className="absolute bottom-6 right-12 hidden md:flex flex-col items-center gap-2 text-luxury-white-muted/40 text-[9px] tracking-[0.3em] uppercase animate-pulse">
           <span>SCROLL</span>
-          <div className="w-[1px] h-12 bg-gold-500/50" />
+          <div className="w-[1px] h-10 bg-gold-500/30" />
         </div>
       </section>
 
