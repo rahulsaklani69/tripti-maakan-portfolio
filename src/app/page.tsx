@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
+export const revalidate = 60; // Force cache validation check at most once every 60 seconds
 
 const stats = [
   { label: "HEIGHT", value: "175 CM / 5'9\"" },
@@ -13,7 +16,59 @@ const stats = [
   { label: "SHOES", value: "38 EU / 7 US" },
 ];
 
-export default function Home() {
+async function getHeroImage(): Promise<string> {
+  const fallbackUrl = "https://eqtpxvapqaitotcdyqbg.supabase.co/storage/v1/object/public/media/hero_image.webp";
+
+  if (!supabase) {
+    console.warn("Supabase client not initialized. Using fallback hero image.");
+    return fallbackUrl;
+  }
+
+  try {
+    const { data, error } = await supabase.storage
+      .from("media")
+      .list("hero", {
+        limit: 10,
+        sortBy: { column: "name", order: "asc" }
+      });
+
+    if (error) {
+      console.error("Supabase Storage error listing media/hero:", error.message);
+      return fallbackUrl;
+    }
+
+    if (!data || data.length === 0) {
+      console.warn("No files found in media/hero. Using fallback hero image.");
+      return fallbackUrl;
+    }
+
+    // Filter to find the first file with an image extension
+    const imageExtensions = [".webp", ".jpg", ".jpeg", ".png", ".gif", ".svg", ".heic", ".tiff"];
+    const firstImageFile = data.find(file => {
+      const lowerName = file.name.toLowerCase();
+      return imageExtensions.some(ext => lowerName.endsWith(ext));
+    });
+
+    if (!firstImageFile) {
+      console.warn("No valid image file found in media/hero. Using fallback hero image.");
+      return fallbackUrl;
+    }
+
+    // Get the public URL for the file
+    const { data: { publicUrl } } = supabase.storage
+      .from("media")
+      .getPublicUrl(`hero/${firstImageFile.name}`);
+
+    return publicUrl;
+  } catch (err) {
+    console.error("Failed to retrieve hero image from Supabase:", err);
+    return fallbackUrl;
+  }
+}
+
+export default async function Home() {
+  const heroImageUrl = await getHeroImage();
+
   return (
     <div className="relative w-full">
       {/* 1. Hero Section (Split-Screen Layout) */}
@@ -31,13 +86,12 @@ export default function Home() {
             
             <div className="relative w-full h-full overflow-hidden bg-black">
               <Image
-                src="https://eqtpxvapqaitotcdyqbg.supabase.co/storage/v1/object/public/media/hero_image.webp"
+                src={heroImageUrl}
                 alt="Tripti Maakan Portrait"
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-cover object-center transition-transform duration-1000 group-hover:scale-105"
-                unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
             </div>
