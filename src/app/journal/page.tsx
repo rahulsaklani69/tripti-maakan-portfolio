@@ -55,7 +55,7 @@ export default function JournalPage() {
         if (error) throw error;
 
         if (data) {
-          const mapped: BlogPost[] = data.map((item) => ({
+          const mapped: BlogPost[] = data.map((item: any) => ({
             ...item,
             excerpt: generateExcerpt(item.content),
           })) as BlogPost[];

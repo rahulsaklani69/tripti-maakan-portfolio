@@ -44,7 +44,7 @@ export default function AdminLayout({
     // Set up real-time session listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event: any, session: any) => {
       if (!session) {
         setAuthorized(false);
         router.push("/login");
