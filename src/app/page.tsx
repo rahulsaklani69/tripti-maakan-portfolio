@@ -101,13 +101,13 @@ export default async function Home() {
         {/* Hero Content */}
         <div className="relative z-20 text-center px-6 max-w-4xl space-y-6">
           <p className="text-xs md:text-sm tracking-[0.4em] text-gold-400 font-semibold uppercase animate-fade-in">
-            ELEGANCE • CONFIDENCE • PRESENCE
+            FASHION • BEAUTY • COMMERCIAL MODEL
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white tracking-[0.15em] uppercase leading-tight font-light animate-fade-in-up">
             TRIPTI <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-500 to-gold-600 font-normal">MAAKAN</span>
           </h1>
-          <p className="text-xs md:text-sm tracking-[0.15em] text-luxury-white-muted max-w-3xl mx-auto leading-relaxed font-light animate-fade-in">
-            Tripti Maakan is an emerging fashion and commercial model based in Haridwar, India. With experience in runway presentations, jewellery campaigns, and professional indoor and outdoor portfolio shoots, she brings confidence, adaptability, and a refined on-camera presence to every project. Available for fashion, beauty, commercial, lifestyle, jewellery, e-commerce, and brand promotion assignments across North India.
+          <p className="text-xs md:text-sm tracking-[0.25em] text-luxury-white-muted uppercase max-w-3xl mx-auto leading-relaxed font-light animate-fade-in">
+            Based in Haridwar | Available for Runway, Editorial and Brand Campaigns
           </p>
           <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/gallery" className="w-full sm:w-auto">
