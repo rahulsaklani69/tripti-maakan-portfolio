@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import HighlightCard from "@/components/portfolio/HighlightCard";
 
 export const revalidate = 60; // Force cache validation check at most once every 60 seconds
 
@@ -201,95 +202,29 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            {/* Division 1 - Editorial */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-black flex flex-col justify-between p-8">
-              {mediaMap.editorial ? (
-                <div className="absolute inset-0 z-0">
-                  <Image
-                    src={mediaMap.editorial}
-                    alt="Editorial Highlight"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    quality={85}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 z-10" />
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-luxury-gray-900 to-black z-0">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-              )}
-              {/* Accent golden bar */}
-              <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
-              <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
-                <h4 className="font-serif text-2xl text-white tracking-wide uppercase">EDITORIAL</h4>
-                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">High-Fashion Concept & Editorial Photography</p>
-                <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
-                  VIEW GALLERY
-                </Link>
-              </div>
-            </div>
+            {/* Division 1 - Commercial */}
+            <HighlightCard
+              mediaUrl={mediaMap.editorial}
+              category="COMMERCIAL"
+              subtext="Commercial Campaigns & Lifestyle Branding"
+              fallbackGradient="bg-gradient-to-br from-luxury-gray-900 to-black"
+            />
 
             {/* Division 2 - Runway */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-black flex flex-col justify-between p-8">
-              {mediaMap.runway ? (
-                <div className="absolute inset-0 z-0">
-                  <Image
-                    src={mediaMap.runway}
-                    alt="Runway Highlight"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    quality={85}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 z-10" />
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-luxury-gray-900 to-black z-0">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-              )}
-              {/* Accent golden bar */}
-              <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
-              <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
-                <h4 className="font-serif text-2xl text-white tracking-wide uppercase">RUNWAY</h4>
-                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">Catwalk, Designer Showcases & Runway Presentation</p>
-                <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
-                  VIEW GALLERY
-                </Link>
-              </div>
-            </div>
+            <HighlightCard
+              mediaUrl={mediaMap.runway}
+              category="RUNWAY"
+              subtext="Catwalk, Designer Showcases & Runway Presentation"
+              fallbackGradient="bg-gradient-to-br from-luxury-gray-900 to-black"
+            />
 
             {/* Division 3 - Beauty */}
-            <div className="group relative h-[450px] overflow-hidden border border-gold-500/10 bg-black flex flex-col justify-between p-8">
-              {mediaMap.beauty ? (
-                <div className="absolute inset-0 z-0">
-                  <Image
-                    src={mediaMap.beauty}
-                    alt="Beauty Highlight"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    quality={85}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 z-10" />
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-luxury-gray-900 to-black z-0">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-              )}
-              {/* Accent golden bar */}
-              <div className="w-8 h-[1px] bg-gold-500/30 group-hover:w-16 transition-all duration-500 relative z-10" />
-              <div className="flex flex-col text-left space-y-2 relative z-10 mt-auto">
-                <h4 className="font-serif text-2xl text-white tracking-wide uppercase">BEAUTY</h4>
-                <p className="text-[10px] tracking-[0.2em] text-gold-400 uppercase">Cosmetic Campaigns, Portrait & Close-Up Editorial</p>
-                <Link href="/gallery" className="text-[10px] tracking-[0.25em] text-white font-bold uppercase underline underline-offset-4 hover:text-gold-400 transition-colors pt-2">
-                  VIEW GALLERY
-                </Link>
-              </div>
-            </div>
+            <HighlightCard
+              mediaUrl={mediaMap.beauty}
+              category="BEAUTY"
+              subtext="Cosmetic Campaigns, Portrait & Close-Up Editorial"
+              fallbackGradient="bg-gradient-to-br from-luxury-gray-900 to-black"
+            />
 
           </div>
         </div>
