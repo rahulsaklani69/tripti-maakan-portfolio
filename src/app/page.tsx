@@ -106,8 +106,8 @@ export default async function Home() {
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white tracking-[0.15em] uppercase leading-tight font-light animate-fade-in-up">
             TRIPTI <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-500 to-gold-600 font-normal">MAAKAN</span>
           </h1>
-          <p className="text-xs md:text-sm tracking-[0.25em] text-luxury-white-muted uppercase max-w-2xl mx-auto leading-relaxed font-light">
-            Grace, Confidence and Timeless Presence Captured Through Fashion, Editorial and Creative Storytelling
+          <p className="text-xs md:text-sm tracking-[0.15em] text-luxury-white-muted max-w-3xl mx-auto leading-relaxed font-light animate-fade-in">
+            Tripti Maakan is an emerging fashion and commercial model based in Haridwar, India. With experience in runway presentations, jewellery campaigns, and professional indoor and outdoor portfolio shoots, she brings confidence, adaptability, and a refined on-camera presence to every project. Available for fashion, beauty, commercial, lifestyle, jewellery, e-commerce, and brand promotion assignments across North India.
           </p>
           <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/gallery" className="w-full sm:w-auto">
@@ -144,10 +144,13 @@ export default async function Home() {
             </h2>
             <div className="w-20 h-[1px] bg-gold-500" />
             <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
-              Tripti Maakan is a model specializing in fashion, runway, editorial, and beauty campaigns. Her professional bio and portfolio updates will be available soon.
+              Tripti Maakan is a fashion and commercial model based in Haridwar, actively building a versatile portfolio across runway, beauty, lifestyle, jewellery, and commercial modelling. She has participated in runway events and collaborated on professional jewellery and portfolio shoots, developing a strong understanding of posing, expression, and camera presence.
             </p>
             <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
-              Through editorial concepts, style showcases, and collaborative projects, Tripti works to build a visual presence that celebrates individuality, modern aesthetics, and visual storytelling.
+              Known for her professionalism, adaptability, and attention to detail, Tripti approaches every project with dedication and enthusiasm. Her portfolio reflects a balance of elegance, confidence, and contemporary style, making her suitable for fashion campaigns, editorial concepts, jewellery promotions, lifestyle branding, e-commerce projects, and creative collaborations.
+            </p>
+            <p className="text-sm text-luxury-white-muted leading-relaxed font-light">
+              She is available for assignments, photoshoots, campaigns, and brand partnerships across Uttarakhand, Delhi NCR, Noida, Rajasthan, West Uttar Pradesh, Himachal Pradesh, and other locations throughout North India.
             </p>
             <div className="pt-4">
               <Link href="/contact" className="inline-flex items-center text-xs tracking-[0.2em] font-semibold text-gold-500 hover:text-white uppercase transition-colors group">
